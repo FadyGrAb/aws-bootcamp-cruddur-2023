@@ -20,7 +20,7 @@ And on an actual napkin 😉. Sorry for the bad quality! It's very hard to write
 ### Installed AWS CLI:
 I am not confortable using my AWS credentials in other cloud services. So I'll use the AWS CLI from my local machine specially that I recall that you said in one of the videos that it will be used for administration. And this was one of the *recommendations* that appeared in the warning message when I tried to generate an Access key from IAM to use the CLI via IAM Identiy Center.  
 ![Access Keys recommendation](assests/week00/keyrecomendation.png)  
-So I've installed it in my Windows local environement using powershell follows:  
+So I've installed it in my Windows local environement using powershell as follows:  
   
 Searching for the package using `winget` to install the package from [Microsoft Package Manager service](https://learn.microsoft.com/en-us/windows/package-manager/winget/)
 ```pwsh
