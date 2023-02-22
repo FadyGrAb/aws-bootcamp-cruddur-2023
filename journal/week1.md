@@ -3,28 +3,28 @@
 ## Required Homework:
 ### Containerize Application (Dockerfiles, Docker Compose)
 I've built the backend and frontend containers using Dockerfile  
-Running backend-flask (build from Dockerfile)
+* Running backend-flask (build from Dockerfile)
 ![backend dockerfile](assests/week01/reqhw-dockerize-backend-dockerfile.png)  
-/api/activities/home response  
+* /api/activities/home response  
 ![backend response](assests/week01/reqhw-dockerize-backend-dockerfile%2002.png)
    
     
-Runing frontend-react-js (build from Dockerfile)
+* Runing frontend-react-js (build from Dockerfile)
 ![frontend dockerfile](assests/week01/reqhw-dockerize-frontend-dockerfile%2001.png)
-Frontend page
+* Frontend page
 ![frontend page](assests/week01/reqhw-dockerize-frontend-dockerfile%2002.png)
 
-And with docker compose
+* And with docker compose
 ![docker compose](assets/week01/../../assests/week01/reqhw-dockerize-dockercompose%2001.png)
 
-Frontend while running with docker compose using the backend API
+* Frontend while running with docker compose using the backend API
 ![docker compose frontend and backend](assests/week01/reqhw-dockerize-dockercompose%2002.png)
 
 ### Document the Notification Endpoint for the OpenAPI Document:
 ![OpenAPI documentation](assests/week01/reqhw-open-api%2001.png)
 
 ### Write a Flask Backend Endpoint for Notifications:
-Result for the new nofications endpoint
+* Result for the new nofications endpoint
 ![notifications backend](assests/week01/reqhw-notificaitons-backend%2001.png)
 
 ### Write a React Page for Notifications:
@@ -45,9 +45,72 @@ As for postges, I've logged in as the '*postgres*' user as instructed and listed
 ### Intalling Docker on my local machine and running the same containers:
 
 I've installed Docker Desktop on windows on my local enviornment and ran the containers.  
-Running docker from vscode's terminal:
+* Running docker from vscode's terminal:
 ![vscode docker](assests/week01/hwcl-01.png)
-Docker desktop on Windows:
+* Docker desktop on Windows:
 ![docker desktop](assests/week01/hwcl-02.png)
 
+### Building a "*Hello World*" flask app localy:
+I have created a very simple flask app having only one root endpoint "/" with the intention to dockerize it and push it to DockerHub then pulling it back from an EC2 ([App repo](https://github.com/FadyGrAb/aws-bootcamp-docker-flask-app)).  
+I tested the app localy without docker and launched the app on port 8888
+```console
+flask run --host=0.0.0.0 --port=8888
+```
+* Flask dev server and response (without docker)
+![flask dev server](assests/week01/hwcl-testing-flaskapp-locally-01.png)
+* Browser Response (actually now it isn't form docker, yet 😉)
+![flask app from browser](assests/week01/hwcl-testing-flaskapp-locally-02.png)
 
+### Dockerize the **flask-docker** app and test it from docker:
+I've created a [Dockerfile](https://github.com/FadyGrAb/aws-bootcamp-docker-flask-app/blob/main/Dockerfile) for the app to run on the container on port 8080.
+```console
+docker build -t flask-docker:demo . 
+```
+![Docker build successfull](assests/week01/hwcl-dockerize-and-test-flask-docker-app-01.png)
+Then I ran the app as a container and tested it.
+```console
+docker run --rm -p 8080:8080 -it flask-docker:demo
+```
+* Flask dev server from docker
+![flask dev server from docker](assests/week01/hwcl-dockerize-and-test-flask-docker-app-02.png)
+* Browser page (from docker this time 🙂)
+![docker browser page](assests/week01/hwcl-dockerize-and-test-flask-docker-app-03.png)
+
+### Pushing the image to DockerHub:
+In order to push the image, I've followed the next steps (as described in the docs [here](https://docs.docker.com/engine/reference/commandline/push/) and [here](https://docs.docker.com/docker-hub/repos/)):
+* login to DockerHub from the CLI
+```console
+docker login
+```
+![docker hub login](assests/week01/hwcl-push-docker-image-01.png)
+* Tag the flask-docker app image to match my DockerHub ID
+```console
+docker image tag flask-docker:demo fadygrab/flask-docker:demo
+```
+![tagging the image](assests/week01/hwcl-push-docker-image-02.png)
+* And finaly pushing the image to the [DockerHub repo]()
+```console
+docker image push fadygrab/flask-docker:demo
+```
+![image pushed](assests/week01/hwcl-push-docker-image-03.png)
+![image pushed](assests/week01/hwcl-push-docker-image-04.png)
+
+## Pulling the image from an EC2:
+I've performed the following:
+* Provision an EC2.
+![EC2](assests/week01/hwcl-ec2-test-01.png)
+* Install docker.
+```
+sudo yum update
+sudo yum install docker
+sudo systemctl start docker
+```
+![docker started on EC2](assests/week01/hwcl-ec2-test-02.png)
+
+* Pull the image.
+![image pulled](assets/../assests/week01/hwcl-ec2-test-03.png)
+* Run a container.
+![container running](assests/week01/hwcl-ec2-test-04.png)
+* And finaly tested it with `curl` command. And it worked 🥳
+![image is working on EC2](assests/week01/hwcl-ec2-test-05.png)
+The 200 status code and the "*Hello from flask within docker*" response!
