@@ -22,5 +22,9 @@ Frontend while running with docker compose using the backend API
 
 ### Write a Flask Backend Endpoint for Notifications:
 Result for the new nofications endpoint
+![notifications backend](assests/week01/reqhw-notificaitons-backend%2001.png)
+
+### Write a React Page for Notifications:
+![notifications frontend](assests/week01/reqhw-notificaitons-frontend%2001.png)
 
 
