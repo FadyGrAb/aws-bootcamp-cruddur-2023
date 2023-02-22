@@ -31,7 +31,14 @@ Result for the new nofications endpoint
 ![notifications frontend](assests/week01/reqhw-notificaitons-frontend%2001.png)
 
 ### Run DynamoDB Local Container and ensure it works:
+Running `docker compose ps` after `docker compose up -d` to see all the running containers. The DynamomDB container (and postgres container) are highligted.
+![DynamoDB and postgress containers](assests/week01/reqhw-dynamodb-postgres%2001.png)
+<br>
+And to ensure that dynamodb is working, I've created the table and added the item as in the instructions then listed them out.
+![Listing dynamodb table and items](assests/week01/reqhw-dynamodb-postgres%2002.png)
 
 ### Run Postgres Container and ensure it works:
+As for postges, I've logged in as the '*postgres*' user as instructed and listed all the databases in the db with `\l`.
+![databases in postgres](assests/week01/reqhw-dynamodb-postgres%2003.png)
 
 
