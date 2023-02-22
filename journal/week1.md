@@ -41,4 +41,13 @@ And to ensure that dynamodb is working, I've created the table and added the ite
 As for postges, I've logged in as the '*postgres*' user as instructed and listed all the databases in the db with `\l`.
 ![databases in postgres](assests/week01/reqhw-dynamodb-postgres%2003.png)
 
+## Homework chalenges:
+### Intalling Docker on my local machine and running the same containers:
+
+I've installed Docker Desktop on windows on my local enviornment and ran the containers.  
+Running docker from vscode's terminal:
+![vscode docker](assests/week01/hwcl-01.png)
+Docker desktop on Windows:
+![docker desktop](assests/week01/hwcl-02.png)
+
 
