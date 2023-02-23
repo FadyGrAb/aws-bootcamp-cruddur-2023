@@ -50,6 +50,9 @@ I've installed Docker Desktop on windows on my local enviornment and ran the con
 * Docker desktop on Windows:
 ![docker desktop](assests/week01/hwcl-02.png)
 
+### Reviewed docker build best practice:
+I've checked out this [doc page](https://docs.docker.com/engine/reference/builder/#dockerignore-file) and tried to apply the image size reductions tactics next.
+
 ### Building a "*Hello World*" flask app localy:
 I have created a very simple flask app having only one root endpoint "/" with the intention to dockerize it and push it to DockerHub then pulling it back from an EC2 ([App repo](https://github.com/FadyGrAb/aws-bootcamp-docker-flask-app)).  
 I tested the app localy without docker and launched the app on port 8888
@@ -160,3 +163,18 @@ docker image list                                       # Sanity-check.
 ![push the new image](assests/week01/hwcl-reduce-size-03.png)  
 The new image on DockerHub 👇
 ![the new image on dockerhub](assests/week01/hwcl-reduce-size-04png.png)
+
+## Furthure reducing the image size:
+I've created a vertual python enviornment on my local machine (when I was testing the app) and it turned out that the ```COPY . /flask-docker-demo/ ``` was copying EVERYTHING in the root folder including the git history, the venv files and dockerfiles. And as another best prcatice, I've used [.dockerignore](https://github.com/FadyGrAb/aws-bootcamp-docker-flask-app/blob/main/.dockerignore) to exclude all the files/folders I don't need (I could have just modified the copy layer to be ```COPY app.py requirements /flask-docker-demo/``` and it would have just worked the same but I wanted to used .dockerignore).  
+So again I build the v2 image (but tagged it directly to DockerHub user name) and this time I've achieved 78% size reduction from the original size and 69% size reduction for V1.  
+I've followed the next steps:
+1. Re-build the image this time with a .dockerignore inplace and tagging the image to match the dockerhub user on the fly.
+2. See the resulting images size (69% recuction from v1).
+3. Run a container with V2 image.
+4. Test that container with ```curl``` command and I got the "*Hello form flask within docker*" statement.
+5. Stop the container.
+6. Push the v2 image to the DockerHub repo.
+
+![further size reduction](assests/week01/hwcl-reduce-size-05png.png)  
+And the v2 image is also on docker hub too  
+![v2 on dockerhub](assests/week01/hwcl-reduce-size-06.png)
