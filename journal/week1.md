@@ -149,6 +149,14 @@ docker container list --all                         # Making sure that the conta
     3. Pushing the new image.
     4. Listing the images again to see the new tag just as sanity check.
 
+Used commands:
+```powershell
+docker image list                                       # List the available images locally.
+docker tag flask-docker:v1 fadygrab/flask-docker:v1     # Tagging the image to match my DcokerHub repo username.
+docker image push fadygrab/flask-docker:v1              # Pushing the new image to the repo.
+docker image list                                       # Sanity-check.
+```
+
 ![push the new image](assests/week01/hwcl-reduce-size-03.png)  
 The new image on DockerHub 👇
 ![the new image on dockerhub](assests/week01/hwcl-reduce-size-04png.png)
