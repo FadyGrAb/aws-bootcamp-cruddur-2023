@@ -58,7 +58,7 @@ flask run --host=0.0.0.0 --port=8888
 ```
 * Flask dev server and response (without docker)
 ![flask dev server](assests/week01/hwcl-testing-flaskapp-locally-01.png)
-* Browser Response (actually now it isn't form docker, yet 😉)
+* Browser Response (actually now it isn't form docker, yet 😉)  
 ![flask app from browser](assests/week01/hwcl-testing-flaskapp-locally-02.png)
 
 ### Dockerize the **flask-docker** app and test it from docker:
@@ -66,14 +66,14 @@ I've created a [Dockerfile](https://github.com/FadyGrAb/aws-bootcamp-docker-flas
 ```console
 docker build -t flask-docker:demo . 
 ```
-![Docker build successfull](assests/week01/hwcl-dockerize-and-test-flask-docker-app-01.png)
+![Docker build successfull](assests/week01/hwcl-dockerize-and-test-flask-docker-app-01.png)  
 Then I ran the app as a container and tested it.
 ```console
 docker run --rm -p 8080:8080 -it flask-docker:demo
 ```
 * Flask dev server from docker
 ![flask dev server from docker](assests/week01/hwcl-dockerize-and-test-flask-docker-app-02.png)
-* Browser page (from docker this time 🙂)
+* Browser page (from docker this time 🙂)  
 ![docker browser page](assests/week01/hwcl-dockerize-and-test-flask-docker-app-03.png)
 
 ### Pushing the image to DockerHub:
@@ -97,9 +97,9 @@ docker image push fadygrab/flask-docker:demo
 
 ## Pulling the image from an EC2:
 I've performed the following:
-* Provision an EC2.
+* Provision an EC2 with a Role of DicrectConnect FullAccess to be able to access from the AWS portal directly.
 ![EC2](assests/week01/hwcl-ec2-test-01.png)
-* Install docker.
+* Install and start docker on EC2 (I have some previous experience with that).
 ```
 sudo yum update
 sudo yum install docker
@@ -107,10 +107,48 @@ sudo systemctl start docker
 ```
 ![docker started on EC2](assests/week01/hwcl-ec2-test-02.png)
 
-* Pull the image.
+* Pull the image.  
 ![image pulled](assets/../assests/week01/hwcl-ec2-test-03.png)
-* Run a container.
+* Run a container.  
 ![container running](assests/week01/hwcl-ec2-test-04.png)
-* And finaly tested it with `curl` command. And it worked 🥳
-![image is working on EC2](assests/week01/hwcl-ec2-test-05.png)
+* And finaly tested it with `curl` command. And it worked 🥳  
+![image is working on EC2](assests/week01/hwcl-ec2-test-05.png)  
 The 200 status code and the "*Hello from flask within docker*" response!
+
+## Trying to reduce the image size and pushing it back to docker hub:
+I've researched the topic of how to achieve a small image. Some of the tactics were to use minimal base images and purge any cached file for the pip (if used) and package manager. I've tried those and achieved almost 28% size reduction of the overall image size (in my local environment). Then I have commited the changes to the docker hub repo.  
+* Creating a new docker file with the below changes
+    - Changing the base image form ```python:3.10.10-slim-bullseye``` to ```python:3.10.10-alpine3.17```
+    - Purged the pip cache in the same ```RUN``` layer to install the requirements to reduce the layers count ```RUN pip3 install -r requirements && pip3 cache purge```(another optimization tactic).
+* I've built the new image form the new [dockerfile](https://github.com/FadyGrAb/aws-bootcamp-docker-flask-app/blob/main/Dockerfile.v1) and almost 75MB size reduction is achieved.
+```powershell
+docker build -t flask-docker:v1 -f ./Dockervile.v1 .        # The -f option is to override the default Dockerfile
+```
+![image reduced size](assests/week01/hwcl-reduce-size-01.png)  
+* Then I've retested the new image just to be sure 😉
+    1. Run the container.
+    2. Test the endpoint with ```curl``` command (to save a bit of time 😁) and I goth the "*Hello from flask within docker*" phrase.
+    3. And I got the 200 status code.
+    4. Stopped the container.
+    5. Made sure that the container doesn't exsist anymore.
+
+Used commands:
+```powershell
+docker run --rm -p 8080:8080 -d flask-docker:v1     # Run the container.
+docker container list                               # List the running containers.
+curl [-I] http://localhost:8080                     # Get the endpoint's response. (curl must be installed in order to work. I use the executable from my local git installation on Windows)
+docker container stop <container id>                # Stopping the container.
+docker container list --all                         # Making sure that the container is stopped.
+```
+
+![testing the new image](assests/week01/hwcl-reduce-size-02.png)
+
+* And finally performing the same procedure to push the new image to the DockerHub repo after tagging the new image using the following steps:
+    1. Listing the current images in my local enviornment.
+    2. Taging the new image with my DockerHub user name.
+    3. Pushing the new image.
+    4. Listing the images again to see the new tag just as sanity check.
+
+![push the new image](assests/week01/hwcl-reduce-size-03.png)  
+The new image on DockerHub 👇
+![the new image on dockerhub](assests/week01/hwcl-reduce-size-04png.png)
