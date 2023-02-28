@@ -9,3 +9,11 @@ I've completed the Honeycomb instrumentation as per the instructions and was abl
 ![span](assests/week02/req-hw-honeycom02.png)  
 * Used Honeycomb queries:  
 ![Queries](assests/week02/req-hw-honeycom03.png)  
+
+### Instrument AWS X-Ray:
+I was able to instrument AWS X-Ray as follows:  
+* X-ray deamon logs  
+![x-ray logs](assests/week02/req-hw-xray-05.png)  
+* X-ray traces in the cloudWatch UI:  
+![CloudWatch](assests/week02/req-hw-xray-06.png)  
+![CloudWatch segments](assests/week02/req-hw-xray-07.png)  
