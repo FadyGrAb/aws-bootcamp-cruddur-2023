@@ -16,6 +16,11 @@ tasks:
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
 
+  - name: react-js
+    command: |
+      cd frontend-react-js
+      npm install
+
 vscode:
   extensions:
     - 42Crunch.vscode-openapi
