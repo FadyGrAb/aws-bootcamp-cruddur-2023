@@ -26,7 +26,13 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
+# CloudWatch logs imports
+import watchtower
+import logging
+from time import strftime
+
 app = Flask(__name__)
+
 
 # Initialize Honeycomb
 provider = TracerProvider()
@@ -42,6 +48,15 @@ RequestsInstrumentor().instrument()
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 XRayMiddleware(app, xray_recorder)
+
+# Configuring Logger to Use CloudWatch
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+cw_handler = watchtower.CloudWatchLogHandler('cruddur')
+LOGGER.addHandler(console_handler)
+LOGGER.addHandler(cw_handler)
+LOGGER.info("test-log")
 
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
@@ -91,7 +106,7 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run()
+  data = HomeActivities.run(LOGGER)
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
@@ -146,6 +161,13 @@ def data_activities_reply(activity_uuid):
   else:
     return model['data'], 200
   return
+
+# CloudWatch logging
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
 
 if __name__ == "__main__":
   app.run(debug=True)

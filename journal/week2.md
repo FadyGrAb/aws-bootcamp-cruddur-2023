@@ -17,3 +17,7 @@ I was able to instrument AWS X-Ray as follows:
 * X-ray traces in the cloudWatch UI:  
 ![CloudWatch](assests/week02/req-hw-xray-06.png)  
 ![CloudWatch segments](assests/week02/req-hw-xray-07.png)  
+
+### Configure custom logger to send to CloudWatch Logs:
+I was able to send the application logs to CloudWatch:  
+![CloudWatch](assests/week02/req-hw-cloudwatch-01.png)
