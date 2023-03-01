@@ -191,6 +191,20 @@ def init_rollbar():
         # flask already sets up logging
         allow_logging_basic_config=False)
 
+    # Homework challenge
+    # Payload modifier
+    def rollbar_payload_handler(payload): # kw is currently unused
+      # Rollbar: adding the user ID to the error
+      # generating a random uuid each time.
+      import uuid, random
+      user_id = "user-" + str(uuid.uuid4())
+      payload["data"]["user.id"] = user_id # Add new key/value to the payload
+      payload["data"]["user.type"] = random.choice(["standard", "premium"])
+      payload["data"]["user.team"] = random.choice(["red team", "blue team", "green team", "yellow team"])
+      return payload
+
+    rollbar.events.add_payload_handler(rollbar_payload_handler)
+    
     # send exceptions from `app` to rollbar, using flask's signal system.
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
