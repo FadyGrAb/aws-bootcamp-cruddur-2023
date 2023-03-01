@@ -32,7 +32,9 @@ tasks:
       chmod u+rw ~/.poshthemes/*.omp.*
       rm ~/.poshthemes/themes.zip
     command: |
-      eval "$(oh-my-posh init bash --config ~/.poshthemes/stelbent-compact.minimal.omp.json)"
+      echo "eval \"\$(oh-my-posh init bash --config ~/.poshthemes/stelbent-compact.minimal.omp.json)\"" >> ~/.bashrc
+      source ~/.bashrc
+
 
 vscode:
   extensions:
