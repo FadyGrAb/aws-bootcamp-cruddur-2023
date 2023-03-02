@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
-import os
 
 from services.home_activities import *
 from services.notifications_activities import *
@@ -14,58 +13,26 @@ from services.messages import *
 from services.create_message import *
 from services.show_activity import *
 
-# Honeycomb imports
-from opentelemetry import trace
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-# AWS X-Ray imports
-from aws_xray_sdk.core import xray_recorder
-from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
-
-# CloudWatch logs imports
-import watchtower
-import logging
+import os
 from time import strftime
+from random import choice
+from uuid import uuid4
 
-# Rollbar imports
-import rollbar
-import rollbar.contrib.flask
-from flask import got_request_exception
+from telemetry import Telemetry
 
 app = Flask(__name__)
 
+def rollbar_payload_handler(payload):
+  payload["data"]["user.id"] = "user-" + str(uuid4())
+  payload["data"]["user.type"] = choice(["standard", "premium"])
+  payload["data"]["user.team"] = choice(["red team", "blue team", "green team", "yellow team"])
+  return payload
 
-# Initialize Honeycomb
-provider = TracerProvider()
-processor = BatchSpanProcessor(OTLPSpanExporter())
-provider.add_span_processor(processor)
-trace.set_tracer_provider(provider)
-tracer = trace.get_tracer(__name__)
-
-FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
-
-# Initialize X-ray
-xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-XRayMiddleware(app, xray_recorder)
-
-# Configuring Logger to Use CloudWatch
-LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.DEBUG)
-console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler('cruddur')
-LOGGER.addHandler(console_handler)
-LOGGER.addHandler(cw_handler)
-LOGGER.info("test-log")
-
-# Init Rollbar
-rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
-
+telemetry_agent = Telemetry(
+  app,
+  rollbar_payload_handler=rollbar_payload_handler,
+  rollbar_active=False
+)
 
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
@@ -175,42 +142,13 @@ def data_activities_reply(activity_uuid):
 @app.after_request
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
-    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    telemetry_agent.cloudwatch_logger.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    # LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
     return response
-
-@app.before_first_request
-def init_rollbar():
-    """init rollbar module"""
-    rollbar.init(
-        # access token
-        rollbar_access_token,
-        # environment name
-        'production',
-        # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
-        # flask already sets up logging
-        allow_logging_basic_config=False)
-
-    # Homework challenge
-    # Payload modifier
-    def rollbar_payload_handler(payload): # kw is currently unused
-      # Rollbar: adding the user ID to the error
-      # generating a random uuid each time.
-      import uuid, random
-      user_id = "user-" + str(uuid.uuid4())
-      payload["data"]["user.id"] = user_id # Add new key/value to the payload
-      payload["data"]["user.type"] = random.choice(["standard", "premium"])
-      payload["data"]["user.team"] = random.choice(["red team", "blue team", "green team", "yellow team"])
-      return payload
-
-    rollbar.events.add_payload_handler(rollbar_payload_handler)
-    
-    # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 @app.route('/rollbar/test')
 def rollbar_test():
-    rollbar.report_message('Hello World!', 'warning')
+    telemetry_agent.rollbar_report_message('Hello World!', 'warning')
     return "Hello World!"
 
 if __name__ == "__main__":
