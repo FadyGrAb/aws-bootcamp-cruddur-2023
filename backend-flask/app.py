@@ -193,7 +193,7 @@ def init_rollbar():
 
     # Homework challenge
     # Payload modifier
-    def rollbar_payload_handler(payload): # kw is currently unused
+    def rollbar_payload_handler(payload):
       # Rollbar: adding the user ID to the error
       # generating a random uuid each time.
       import uuid, random
