@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from opentelemetry import trace
 
-tracer = trace.get_tracer("home.activities")
-
 class HomeActivities:
-  def run(logger):
-    logger.info("home-activities")
-    with tracer.start_as_current_span("home-activities-mock-data"):
+  def run(telemetry_agent):
+    honeycomb_tracer = telemetry_agent.honeycomb_get_tracer("home-activities-telemetry-module")
+    telemetry_agent.cloudwatch_log_info("home-activities-telemetry-module")
+    
+    with honeycomb_tracer.start_as_current_span("home-activities-mock-data-telemetry-module"):
       # Get the current span
       span = trace.get_current_span()
       now = datetime.now(timezone.utc).astimezone()

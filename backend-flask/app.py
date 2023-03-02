@@ -31,7 +31,7 @@ def rollbar_payload_handler(payload):
 telemetry_agent = Telemetry(
   app,
   rollbar_payload_handler=rollbar_payload_handler,
-  rollbar_active=False
+  # disable=True
 )
 
 frontend = os.getenv('FRONTEND_URL')
@@ -82,7 +82,7 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run(LOGGER)
+  data = HomeActivities.run(telemetry_agent)
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
@@ -92,7 +92,7 @@ def data_notifications():
 
 @app.route("/api/activities/@<string:handle>", methods=['GET'])
 def data_handle(handle):
-  model = UserActivities.run(handle)
+  model = UserActivities.run(handle, telemetry_agent)
   if model['errors'] is not None:
     return model['errors'], 422
   else:
@@ -142,7 +142,7 @@ def data_activities_reply(activity_uuid):
 @app.after_request
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
-    telemetry_agent.cloudwatch_logger.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    telemetry_agent.cloudwatch_log_error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
     # LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
     return response
 

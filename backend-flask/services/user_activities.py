@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta, timezone
-from aws_xray_sdk.core import xray_recorder
-
+from time import sleep
+import random
 
 class UserActivities:
-  def run(user_handle):
+  def run(user_handle, telemetry_agent):
     # Xray
-    segment = xray_recorder.begin_segment('user_activities')
 
     model = {
       'errors': None,
@@ -27,11 +26,20 @@ class UserActivities:
       }]
       model['data'] = results
 
-      subsegment = xray_recorder.begin_subsegment('mock-data')
+      subsegment = telemetry_agent.xray_begin_subsegment('user_activities_telemetry_module_data_mock')
       # xray
-      dict = {
-        "now": now.isoformat(),
-        "results-size": len(model['data'])
-      }
-      subsegment.put_metadata('key', dict, 'namespace')
+      # dict = {
+      #   "now": now.isoformat(),
+      #   "results-size": len(model['data'])
+      # }
+      telemetry_agent.xray_add_subsegment_metadata("timestamp", now.isoformat())
+      telemetry_agent.xray_add_subsegment_metadata("response-size", len(model['data']))
+
+      telemetry_agent.xray_end_subsegment()
+
+      for i in range (10):
+        telemetry_agent.xray_begin_subsegment(f"user_activities_telemetry_module_added_latency_{i}")
+        sleep(random.random())
+        telemetry_agent.xray_end_subsegment()
+      # xray_recorder.end_segment()
     return model

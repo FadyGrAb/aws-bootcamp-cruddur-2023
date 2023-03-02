@@ -99,39 +99,27 @@ class Telemetry:
         if self._rollbar_logger:
             self._rollbar_logger.report_message(message, message_type)
 
-    def cloudwatch_log_error(self, message):
+    def cloudwatch_log_error(self, *args):
         if self._cloudwatch_logger:
-            self._cloudwatch_logger.error(message)
+            self._cloudwatch_logger.error(*args)
+    
+    def cloudwatch_log_info(self, *args):
+        if self._cloudwatch_logger:
+            self._cloudwatch_logger.info(*args)
 
     def honeycomb_get_tracer(self, tracer_name):
         if self._honeycomb_trace:
             return self._honeycomb_trace.get_tracer(tracer_name)
 
-
-    @property
-    def honeycomb_trace(self):
-        if self._honeycomb_trace:
-            return self._honeycomb_trace
-        else:
-            print("Honeycomb is disabled")
-
-    @property
-    def cloudwatch_logger(self):
-        if self._cloudwatch_logger:
-            return self._cloudwatch_logger
-        else:
-            print("Honeycomb is disabled")
-
-    @property
-    def xray_recorder(self):
+    def xray_begin_subsegment(self, subsegment_name):
         if self._xray_recorder:
-            return self._xray_recorder
-        else:
-            print("Honeycomb is disabled")
+            return self._xray_recorder.begin_subsegment(subsegment_name)
 
-    # @property
-    # def rollbar_logger(self):
-    #     if self._rollbar_logger:
-    #         return self._rollbar_logger
-    #     else:
-    #         print("Honeycomb is disabled")
+    def xray_end_subsegment(self):
+        if self._xray_recorder:
+            self._xray_recorder.end_subsegment()
+
+    def xray_add_subsegment_metadata(self, key, value):
+        if self._xray_recorder:
+            subsegment = self._xray_recorder.current_subsegment()
+            subsegment.put_metadata(key, value)
