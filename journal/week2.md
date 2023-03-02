@@ -67,11 +67,15 @@ After obtaining the errors, I've fixed the code again to work normally.
 I was able to to get x-ray subsegments working reading the [python sdk docs](https://docs.aws.amazon.com/xray-sdk-for-python/latest/reference/basic.html), **Manually create segment/subsegment**. It turned out we don't need to call *begin_segment* as I assume Flask does that when we hit an endpoint so we only need to call *begin_subsegment* to record whatever code we need to segment. Also, we have to call *end_subsegment* to finish the recording and for the record to show in AWS. For the metadata, only a key-value pair is required and we can logically group them by the *namespace* parameter (it will be '*default*' by default, I've tried it 🙂). The value can be a python dictionary for complex data structures.  
 ```python
 subsegment = xray_recorder.begin_subsegment('home-activities-mock-data')
+
+# Code to be recorded goes here.
 dict = {
       "now": now.isoformat(),
       "results-size": len(model['data'])
 }
 subsegment.put_metadata('key', dict, 'namespace')
+
+
 xray_recorder.end_subsegment()
 ```
 ![xray segments](assests/week02/req-hw-xray-08.png)  
@@ -138,3 +142,4 @@ for i in range (10):
       sleep(random.random())
       telemetry_agent.xray_end_subsegment()
 ```
+This isn't an ideal class implementation and I consider it as a POC.
