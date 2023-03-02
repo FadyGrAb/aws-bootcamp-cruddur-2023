@@ -26,6 +26,7 @@ def rollbar_payload_handler(payload):
   payload["data"]["user.id"] = "user-" + str(uuid4())
   payload["data"]["user.type"] = choice(["standard", "premium"])
   payload["data"]["user.team"] = choice(["red team", "blue team", "green team", "yellow team"])
+  payload["data"]["module_tag"] = "telemetry-module"
   return payload
 
 telemetry_agent = Telemetry(
