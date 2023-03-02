@@ -33,7 +33,25 @@ And received an error (commented out the return from HomeActivities run function
 ![Queries](assests/week02/req-hw-honeycom03.png)  
 
 ### Add custom attributes to Rollarbar:
-I've searched the [Rollbar official documentation](https://docs.rollbar.com/docs/python#transforming-the-payload) about "*Transforming The Payload*" and managed to add dummy *user* attributes that randomly change at each request to simulate the real-world app usage. I've added:  
+I've searched the [Rollbar official documentation](https://docs.rollbar.com/docs/python#transforming-the-payload) about "*Transforming The Payload*" and managed to add dummy *user* attributes that randomly change at each request to simulate the real-world app usage. This is done with a *payload handler* that I've implimented as follows:
+```python
+def rollbar_payload_handler(payload): # kw is currently unused
+      # Rollbar: adding the user ID to the error
+      # generating a random uuid each time.
+      import uuid, random
+      user_id = "user-" + str(uuid.uuid4())
+      payload["data"]["user.id"] = user_id # Add new key/value to the payload
+      payload["data"]["user.type"] = random.choice(["standard", "premium"])
+      payload["data"]["user.team"] = random.choice(["red team", "blue team", "green team", "yellow team"])
+      return payload
+
+# Add handler to rollbar
+rollbar.events.add_payload_handler(rollbar_payload_handler)
+
+```
+
+
+I've added the following attributes:
 * user.id
 * user.type
 * user.team
