@@ -36,6 +36,9 @@ import rollbar
 import rollbar.contrib.flask
 from flask import got_request_exception
 
+from lib.cognito_jwt_token import CognitoJwtToken, TokenVerifyError, TokenExpiredError
+from flask import abort, make_response, jsonify
+
 app = Flask(__name__)
 
 
@@ -61,7 +64,7 @@ console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler('cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
-LOGGER.info("test-log")
+# LOGGER.info("test-log")
 
 # Init Rollbar
 rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
@@ -73,9 +76,16 @@ origins = [frontend, backend]
 cors = CORS(
   app, 
   resources={r"/api/*": {"origins": origins}},
-  expose_headers="location,link",
-  allow_headers="content-type,if-modified-since",
-  methods="OPTIONS,GET,HEAD,POST"
+  headers=["Content-Type", "Authorization"],
+  expose_headers="Authorization",
+  # allow_headers="content-type,if-modified-since,Authorization",
+  methods="OPTIONS,GET,HEAD,POST", 
+)
+
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"),
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+  region=os.getenv("AWS_DEFAULT_REGION"),
 )
 
 @app.route("/api/message_groups", methods=['GET'])
@@ -115,7 +125,17 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run(LOGGER)
+  access_token = CognitoJwtToken.extract_access_token(request.headers)
+  try:
+    cognito_jwt_token.verify(access_token)
+    claims = cognito_jwt_token.claims
+    cognito_user_id = claims.get("username", "something went wrong")
+    data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
+  except TokenVerifyError as e:
+    data = HomeActivities.run(logger=LOGGER)
+  except TokenExpiredError as e:
+    data = HomeActivities.run(logger=LOGGER)
+
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
@@ -175,7 +195,7 @@ def data_activities_reply(activity_uuid):
 @app.after_request
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
-    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    # LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
     return response
 
 @app.before_first_request
