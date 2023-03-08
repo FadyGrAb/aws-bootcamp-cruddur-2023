@@ -68,6 +68,16 @@ services:
     ports:
       - 2000:2000/udp
 
+  cognito-verifier:
+    environment:
+      FRONTEND_URL: "https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      AWS_COGNITO_USER_POOL_ID: "${COGNITO_USER_POOL_ID}"
+      AWS_COGNITO_USER_POOL_CLIENT_ID: "${COGNITO_USER_CLIENT_ID}"
+    build: ./cognito-middleware-node-js
+    ports:
+      - "5555:5555"
+
 # volumes:
 #   db:
 #     driver: local
