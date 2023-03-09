@@ -1,5 +1,5 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-import app from "./server.cjs"
+import app from "./server.cjs";
 
 // let app = require("express");
 
@@ -19,13 +19,13 @@ app.get("/verify", async function (request, response) {
     response.status(200).send("token is valid");
   } catch {
     console.log("Token not valid!");
-    response.status(401).send("token is invalid");
+    response.status(422).send("token is invalid");
   }
 });
 
 app.get("/", function (request, response) {
-    response.json({"message": "Cognito verifier middleware is up!"})
-  });
+  response.status(200).json({ message: "Cognito verifier middleware is up!" });
+});
 
 app.listen(5555, function () {
   let currentDateTime = new Date();
