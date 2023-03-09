@@ -71,4 +71,6 @@ cognito_user_id = cognito_verifier.cognito_user_id
 ```
 The class abstracts all the communications with the middleware and payload (claim) processing.
 
-I didn't write a testing script for the class nor handled the errors properly as my goal was just to get it working similar to the original implementation in the video class and it did. In fact all the demos in the ***Required Homework*** section are using my middleware implementation.
+I didn't write a testing script for the class nor handled the errors properly as my goal was just to get it working similar to the original implementation in the video class and it did. In fact all the demos in the ***Required Homework*** section are using my middleware implementation and it returned the same cognito user ID as in the AWS console.  
+![cognito user ID](assests/week03/hwch-0101-verify.gif)  
+![user ID AWS console](assests/week03/hwch-0102-verify.png)
