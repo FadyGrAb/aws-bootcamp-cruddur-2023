@@ -139,6 +139,7 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
+    ### Video Class implementation ###
     # access_token = CognitoJwtToken.extract_access_token(request.headers)
     # try:
     #     cognito_jwt_token.verify(access_token)
@@ -151,9 +152,11 @@ def data_home():
     # except TokenExpiredError as e:
     #     data = HomeActivities.run(logger=LOGGER)
 
+
+    ### My cognito middleware implimentation
     if cognito_verifier.token_is_valid:
-        data = data = HomeActivities.run(
-            cognito_user_id="dummy user", logger=LOGGER)
+        cognito_user_id = cognito_verifier.cognito_user_id
+        data = data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
     else:
         data = HomeActivities.run(logger=LOGGER)
 

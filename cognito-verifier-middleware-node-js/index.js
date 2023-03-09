@@ -16,7 +16,7 @@ app.get("/verify", async function (request, response) {
       token // the JWT as string
     );
     console.log("Token is valid. Payload:", payload);
-    response.status(200).send("token is valid");
+    response.status(200).send(payload);
   } catch {
     console.log("Token not valid!");
     response.status(422).send("token is invalid");

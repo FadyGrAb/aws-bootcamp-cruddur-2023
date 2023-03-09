@@ -51,3 +51,6 @@ ports:
   - name: xray-daemon
     port: 2000
     visibility: public
+  - name: cognito-verifier
+    port: 5555
+    visibility: public

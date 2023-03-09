@@ -1,16 +1,13 @@
-import logging
 import os
+import json
 
 import requests
-from exceptions import *
+from .exceptions import *
 from flask import Flask, request
-
-logger = logging.getLogger("Cognito Verifier")
-logger.setLevel(logging.DEBUG)
-
 
 class CognitoVerifierMiddleware:
     def __init__(self, app: Flask) -> None:
+        self.app = app
         endpoint = os.getenv("COGNITO_VERIFIER_URL", None)
         if endpoint:
             self._endpoint = endpoint
@@ -20,18 +17,20 @@ class CognitoVerifierMiddleware:
         # Test connection
         self._test_conntection()
 
-        self.app = app
-
     @property
     def token_is_valid(self):
         token = self._extract_token()
         cognito_verifier_response = requests.get(
             f"{self._endpoint}/verify?token={token}")
+
+        if cognito_verifier_response.status_code == 200:
+            self._token_payload = json.loads(cognito_verifier_response.content)
+
         return cognito_verifier_response.status_code == 200
 
     @property
-    def username(self):
-        pass
+    def cognito_user_id(self):
+        return self._token_payload.get("username", "somethin went wrong")
 
     def _extract_token(self):
         auth_header = request.headers.get("Authorization")
@@ -48,4 +47,4 @@ class CognitoVerifierMiddleware:
         if test_connection.status_code != 200:
             raise EndpointConnectionFailedException(test_connection)
         else:
-            logger.info("Cognito Verifier middleware connection test passed.")
+            self.app.logger.info("Cognito Verifier middleware connection test passed.")
