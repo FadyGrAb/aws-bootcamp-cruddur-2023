@@ -1,11 +1,10 @@
 #! /usr/bin/bash
 CYAN='\033[1;36m'
 NO_COLOR='\033[0m'
-LABEL="db-schema-load"
+LABEL="db-seed"
 printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 
-
-SCHEMA_PATH=$(realpath .)/db/schema.sql
+SEED_PATH=$(realpath .)/db/seed.sql
 
 if [ "$1" = "prod" ]
 then
@@ -16,7 +15,8 @@ then
 else
     MESSAGE="Using Dev"
     printf "${CYAN}== ${MESSAGE}${NO_COLOR}\n"
+    
     CON_URL=$CONNECTION_URL
 fi
 
-psql $CON_URL < $SCHEMA_PATH
+psql $CON_URL < $SEED_PATH
