@@ -10,5 +10,5 @@ watchtower
 blinker
 rollbar
 python-jose
+psycopg[pool]
 psycopg[binary]
-psycopg[poll]

@@ -69,7 +69,7 @@ console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler('cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
-# LOGGER.info("test-log")
+LOGGER.info("test-log")
 
 # Init Rollbar
 rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
@@ -86,7 +86,6 @@ cors = CORS(
     resources={r"/api/*": {"origins": origins}},
     headers=["Content-Type", "Authorization"],
     expose_headers="Authorization",
-    # allow_headers="content-type,if-modified-since,Authorization",
     methods="OPTIONS,GET,HEAD,POST",
 )
 
@@ -159,7 +158,6 @@ def data_home():
         data = data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
     else:
         data = HomeActivities.run(logger=LOGGER)
-
     return data, 200
 
 
@@ -223,12 +221,11 @@ def data_activities_reply(activity_uuid):
 
 # CloudWatch logging
 
-
-@app.after_request
-def after_request(response):
-    timestamp = strftime('[%Y-%b-%d %H:%M]')
-    # LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
-    return response
+# @app.after_request
+# def after_request(response):
+#     timestamp = strftime('[%Y-%b-%d %H:%M]')
+#     # LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+#     return response
 
 
 @app.before_first_request
