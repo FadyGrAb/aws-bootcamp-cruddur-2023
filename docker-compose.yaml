@@ -17,6 +17,10 @@ services:
       AWS_COGNITO_USER_POOL_CLIENT_ID: "${COGNITO_USER_CLIENT_ID}"
       COGNITO_VERIFIER_URL: "https://5555-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
       CONNECTION_URL: "postgresql://postgres:password@db:5432/cruddur"
+      PROD_CONNECTION_URL: "${PROD_CONNECTION_URL}"
+      GITPOD_IP: "${GITPOD_IP}"
+      DB_SG_ID: "${DB_SG_ID}"
+      DB_SG_RULE_ID: "${DB_SG_RULE_ID}"
     build: ./backend-flask
     ports:
       - "4567:4567"
