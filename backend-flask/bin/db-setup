@@ -1,4 +1,5 @@
 #! /usr/bin/bash
+-e
 
 CYAN='\033[1;36m'
 NO_COLOR='\033[0m'
@@ -8,8 +9,10 @@ printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 BIN_PATH="$(realpath .)/bin"
 
 # Drop the db
-bash "$BIN_PATH/db-drop $1"
-# create the db
-psql $CON_URL < $SCHEMA_PATH
+bash "$BIN_PATH/db-drop"
+# Create the db
+bash "$BIN_PATH/db-create"
+# Load the schema
+bash "$BIN_PATH/db-schema-load"
 # Seed tables
-psql $CON_URL < $SEED_PATH
+bash "$BIN_PATH/db-seed"

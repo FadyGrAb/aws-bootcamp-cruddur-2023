@@ -5,7 +5,7 @@ NO_COLOR='\033[0m'
 LABEL="db-sessions"
 printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 
-if [ $1 = "prod" ]
+if [ "$1" = "prod" ]
 then
     MESSAGE="Using Prod"
     printf "${CYAN}== ${MESSAGE}${NO_COLOR}\n"
