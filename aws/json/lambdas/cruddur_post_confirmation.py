@@ -6,10 +6,10 @@ def lambda_handler(event, context):
     user = event['request']['userAttributes']
     print("=====================")
     print(user)
-    user_display_name =     user["name"]
-    user_email =            user["email"]
-    user_handle =           user["preferred_username"]
-    user_cognito_id =       user["sub"]
+    user_display_name = user["name"]
+    user_email = user["email"]
+    user_handle = user["preferred_username"]
+    user_cognito_id = user["sub"]
     try:
         conn = psycopg2.connect(os.getenv("CONNECTION_URL"))
         cur = conn.cursor()
