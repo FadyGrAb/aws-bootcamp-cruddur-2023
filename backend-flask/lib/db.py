@@ -12,7 +12,7 @@ class Db:
 
   def get_template(self,*args):
     app_root_directory = pathlib.Path(app.root_path)
-    template_inner_directory = pathlib.Path.joinpath(args[:-1])
+    template_inner_directory = pathlib.Path(*args[:-1])
     template_file = args[-1] + ".sql"
 
     template_directory = (app_root_directory / "db") / "sql" / template_inner_directory
@@ -23,10 +23,11 @@ class Db:
 
     with template_path.open(mode="r") as f:
       template_content = f.read()
+      f.seek(0)
       lines = f.readlines()
       # Prints line numbers :)
       for i in range(len(lines)):
-        print(str(i + 1).rjust(2), lines[i])
+        print(str(i + 1).rjust(2), " ", lines[i], end="")
 
     return template_content
 
@@ -37,20 +38,18 @@ class Db:
     Args:
         params (_type_): _description_
     """
-    # blue = '\033[94m'
-    # no_color = '\033[0m'
     print(Back.BLUE + Fore.WHITE + "SQL Params:" + Style.RESET_ALL)
     for key, value in params.items():
       print(key, ":", value)
 
   def print_sql(self,title,sql):
-    # cyan = '\033[96m'
-    # no_color = '\033[0m'
-    print(Back.CYAN + Fore.WHITE + f"SQL STATEMENT-[{title}]------" + Style.RESET_ALL)
-    print(sql)
+    print("\n\n" + Back.CYAN + Fore.WHITE + f"SQL STATEMENT-[{title}]------" + Style.RESET_ALL)
+    lines = sql.split("\n")
+    for i in range(len(lines)):
+      print(str(i + 1).rjust(2), " ", lines[i])
 
   def print_sql_err(self,err):
-    # get details about the exception
+    # get details about the exception 
     err_type, err_obj, traceback = sys.exc_info()
 
     # get the line number when exception occured
@@ -60,9 +59,9 @@ class Db:
     print (Fore.RED + f"\npsycopg ERROR: {err} on line number: {line_num}")
     print (f"psycopg traceback: {traceback} -- type: {err_type}")
 
-    # print the pgcode and pgerror exceptions
-    print (f"pgerror: {err.pgerror}")
-    print (f"pgcode: {err.pgcode} \n" + Style.RESET_ALL)
+    # # print the pgcode and pgerror exceptions
+    # print (f"pgerror: {err.pgerror}")
+    # print (f"pgcode: {err.pgcode} \n" + Style.RESET_ALL)
 
   def query_commit(self, sql, params={}):
     self.print_sql('commit with returning',sql)
@@ -77,12 +76,11 @@ class Db:
         if is_returning_id:
           returning_id = cur.fetchone()[0]
         conn.commit()
-        # if is_returning_id:
-        #   return returning_id
+        if is_returning_id:
+          return returning_id
     except Exception as err:
       self.print_sql_err(err)
 
-    return returning_id if is_returning_id else None
 
   def query_array_json(self, sql, params={}):
     """when we want to return a json object
@@ -114,7 +112,6 @@ class Db:
     Returns:
         list: the list of query result and a list of dicts.
     """
-
     self.print_sql('json',sql)
     self.print_params(params)
 
@@ -124,10 +121,7 @@ class Db:
       with conn.cursor() as cur:
         cur.execute(wrapped_sql, params)
         json = cur.fetchone()
-
-    if json == None:
-      "{}"
-    else:
+    if json is not None:
       return json[0]
     
   def query_wrap_object(self,template):

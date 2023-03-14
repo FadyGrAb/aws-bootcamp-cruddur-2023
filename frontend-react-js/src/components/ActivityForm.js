@@ -27,7 +27,8 @@ export default function ActivityForm(props) {
         },
         body: JSON.stringify({
           message: message,
-          ttl: ttl
+          ttl: ttl,
+          user_handle: localStorage.getItem("user_handle")
         }),
       });
       let data = await res.json();

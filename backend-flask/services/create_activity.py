@@ -36,6 +36,7 @@ class CreateActivity:
     elif len(message) > 280:
       model['errors'] = ['message_exceed_max_chars'] 
 
+
     if model['errors']:
       model['data'] = {
         'handle':  user_handle,
@@ -47,6 +48,8 @@ class CreateActivity:
 
       object_json = CreateActivity.query_object_activity(uuid)
       model['data'] = object_json
+
+      # print(">>>>>>>>>>", "CreateActivity, uuid:", uuid)
     return model
   
   def create_activity(handle, message, expires_at):

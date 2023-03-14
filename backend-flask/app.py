@@ -155,7 +155,7 @@ def data_home():
     ### My cognito middleware implimentation
     if cognito_verifier.token_is_valid:
         cognito_user_id = cognito_verifier.cognito_user_id
-        data = data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
+        data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
     else:
         data = HomeActivities.run(logger=LOGGER)
     return data, 200
@@ -190,7 +190,9 @@ def data_search():
 @app.route("/api/activities", methods=['POST', 'OPTIONS'])
 @cross_origin()
 def data_activities():
-    user_handle = 'andrewbrown'
+    
+    # user_handle = 'andrewbrown'
+    user_handle = request.json["user_handle"]
     message = request.json['message']
     ttl = request.json['ttl']
     model = CreateActivity.run(message, user_handle, ttl)
@@ -198,7 +200,6 @@ def data_activities():
         return model['errors'], 422
     else:
         return model['data'], 200
-    return
 
 
 @app.route("/api/activities/<string:activity_uuid>", methods=['GET'])
