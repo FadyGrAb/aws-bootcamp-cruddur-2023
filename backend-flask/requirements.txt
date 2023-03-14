@@ -12,3 +12,4 @@ rollbar
 python-jose
 psycopg[pool]
 psycopg[binary]
+colorama
