@@ -23,30 +23,28 @@ class Db:
 
     with template_path.open(mode="r") as f:
       template_content = f.read()
-      f.seek(0)
-      lines = f.readlines()
+      lines = template_content.split("\n")
       # Prints line numbers :)
-      for i in range(len(lines)):
-        print(str(i + 1).rjust(2), " ", lines[i], end="")
-
+      for idx, line in enumerate(lines):
+        line_number = str(idx + 1).rjust(2)
+        print(f"{line_number} {line}")
+      
     return template_content
 
   def print_params(self, params):
-    """we want to commit data such as an insert
-      be sure to check for RETURNING in all uppercases
-
-    Args:
-        params (_type_): _description_
+    """ we want to commit data such as an insert
+        be sure to check for RETURNING in all uppercases
     """
     print(Back.BLUE + Fore.WHITE + "SQL Params:" + Style.RESET_ALL)
     for key, value in params.items():
       print(key, ":", value)
 
-  def print_sql(self,title,sql):
-    print("\n\n" + Back.CYAN + Fore.WHITE + f"SQL STATEMENT-[{title}]------" + Style.RESET_ALL)
+  def print_sql(self, title, sql):
+    print("\n" + Back.CYAN + Fore.WHITE + f"SQL STATEMENT-[{title}]------" + Style.RESET_ALL)
     lines = sql.split("\n")
-    for i in range(len(lines)):
-      print(str(i + 1).rjust(2), " ", lines[i])
+    for idx, line in enumerate(lines):
+      line_number = str(idx + 1).rjust(2)
+      print(f"{line_number} {line}")
 
   def print_sql_err(self,err):
     # get details about the exception 
@@ -64,10 +62,10 @@ class Db:
     # print (f"pgcode: {err.pgcode} \n" + Style.RESET_ALL)
 
   def query_commit(self, sql, params={}):
-    self.print_sql('commit with returning',sql)
-
+    self.print_sql('Commit with returning', sql)
     pattern = r"\bRETURNING\b"
     is_returning_id = re.search(pattern, sql)
+    returning_id = None
 
     try:
       with self.pool.connection() as conn:
@@ -76,22 +74,14 @@ class Db:
         if is_returning_id:
           returning_id = cur.fetchone()[0]
         conn.commit()
-        if is_returning_id:
-          return returning_id
     except Exception as err:
       self.print_sql_err(err)
 
+    return returning_id if returning_id is not None else None
 
   def query_array_json(self, sql, params={}):
-    """when we want to return a json object
+    """when we want to return a json object"""
 
-    Args:
-        sql (str): the query
-        params (dict, optional): extra parameters. Defaults to {}.
-
-    Returns:
-        dict: json sql query result
-    """
     self.print_sql('array', sql)
     wrapped_sql = self.query_wrap_array(sql)
 
@@ -103,18 +93,10 @@ class Db:
     return json[0]
       
   def query_object_json(self,sql,params={}):
-    """When we want to return an array of json objects
+    """When we want to return an array of json objects"""
 
-    Args:
-        sql (str): the query
-        params (dict, optional): extra parameters. Defaults to {}.
-
-    Returns:
-        list: the list of query result and a list of dicts.
-    """
     self.print_sql('json',sql)
     self.print_params(params)
-
     wrapped_sql = self.query_wrap_object(sql)
 
     with self.pool.connection() as conn:

@@ -22,6 +22,7 @@ services:
       GITPOD_IP: "${GITPOD_IP}"
       DB_SG_ID: "${DB_SG_ID}"
       DB_SG_RULE_ID: "${DB_SG_RULE_ID}"
+      PYTHONUNBUFFERED: TRUE  # To get printed logs in real-time
     build: ./backend-flask
     ports:
       - "4567:4567"
