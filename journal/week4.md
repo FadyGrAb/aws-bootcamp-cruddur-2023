@@ -82,3 +82,4 @@ I've tweeked the *db-setup* script to work with prod rds as I needed a way to re
 ![modified db-setup](assests/week04/hwch-0101-db-setup.gif)  
 ### Creating a test for Lambda:
 While developing the AWS lambda, I've found that creating a test will be very useful. First I've executed the function and printed the *event* param. Then I used the same JSON data I've received as the test template.  
+![lambda test](assests/week04/hwch-0201-lambda-test.gif)
