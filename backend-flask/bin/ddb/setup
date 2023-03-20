@@ -1,0 +1,36 @@
+#! /usr/bin/bash
+-e
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="ddb-setup"
+printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
+
+BIN_PATH="$(realpath .)/bin/ddb"
+
+if [ "$1" = "prod" ]
+then
+    echo "WARNING: This will delete everything in the pord database."
+    read -p "Are you sure you want to continue?[y/N] " -n1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+        exit 0
+    fi
+fi
+echo " "
+
+# drop the table
+bash "$BIN_PATH/drop cruddur-messages" $1
+# load the schema
+bash "$BIN_PATH/shcema-load" $1
+# Seed table
+if [ "$1" = "prod" ]
+then
+    read -p "Do you want to seed prod database with mock data?[y/N] " -n1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+        exit 0
+    fi
+fi
+echo " "
+bash "$BIN_PATH/seed" $1
