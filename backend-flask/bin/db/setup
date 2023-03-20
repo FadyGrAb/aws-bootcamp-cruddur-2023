@@ -6,7 +6,7 @@ NO_COLOR='\033[0m'
 LABEL="db-setup"
 printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 
-BIN_PATH="$(realpath .)/bin"
+BIN_PATH="$(realpath .)/bin/db"
 
 if [ "$1" = "prod" ]
 then
@@ -22,12 +22,12 @@ echo " "
 if [ "$1" != "prod" ]
 then
     # Drop the db
-    bash "$BIN_PATH/db-drop" $1
+    bash "$BIN_PATH/drop" $1
     # Create the db
-    bash "$BIN_PATH/db-create" $1
+    bash "$BIN_PATH/create" $1
 fi
 # Load the schema
-bash "$BIN_PATH/db-schema-load" $1
+bash "$BIN_PATH/schema-load" $1
 # Seed tables
 if [ "$1" = "prod" ]
 then
@@ -38,4 +38,4 @@ then
     fi
 fi
 echo " "
-bash "$BIN_PATH/db-seed" $1
+bash "$BIN_PATH/seed" $1

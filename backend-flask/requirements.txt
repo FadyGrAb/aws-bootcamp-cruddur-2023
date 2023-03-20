@@ -13,3 +13,4 @@ python-jose
 psycopg[pool]
 psycopg[binary]
 colorama
+boto3

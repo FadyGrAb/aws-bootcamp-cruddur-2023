@@ -38,6 +38,10 @@ tasks:
       echo "eval \"\$(oh-my-posh init bash --config ~/.poshthemes/stelbent-compact.minimal.omp.json)\"" >> ~/.bashrc
       source ~/.bashrc
 
+  - name: python-pip
+    command: |
+      pip install -r backend-flask/requirements.txt
+
 
 vscode:
   extensions:
