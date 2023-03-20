@@ -19,10 +19,11 @@ then
 fi
 echo " "
 
+TABLE_NAME="cruddur-messages"
 # drop the table
-bash "$BIN_PATH/drop cruddur-messages" $1
+bash "$BIN_PATH/drop" $TABLE_NAME $1
 # load the schema
-bash "$BIN_PATH/shcema-load" $1
+python3 "$BIN_PATH/schema-load" $1
 # Seed table
 if [ "$1" = "prod" ]
 then
@@ -33,4 +34,4 @@ then
     fi
 fi
 echo " "
-bash "$BIN_PATH/seed" $1
+python3 "$BIN_PATH/seed" $1

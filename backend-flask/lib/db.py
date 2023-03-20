@@ -39,7 +39,10 @@ class Db:
     for key, value in params.items():
       print(key, ":", value)
 
-  def print_sql(self, title, sql):
+  def print_sql(self, title, sql, params=None):
+    if params:
+      self.print_params(params)
+      
     print("\n" + Back.CYAN + Fore.WHITE + f"SQL STATEMENT-[{title}]------" + Style.RESET_ALL)
     lines = sql.split("\n")
     for idx, line in enumerate(lines):
@@ -91,6 +94,14 @@ class Db:
         json = cur.fetchone()
 
     return json[0]
+
+  def query_value(self, sql, params={}):
+    self.print_sql('value', sql, params)
+    with self.pool.connection() as conn:
+      with conn.cursor() as cur:
+        cur.execute(sql, params)
+        json = cur.fetchone()
+        return json[0]
       
   def query_object_json(self,sql,params={}):
     """When we want to return an array of json objects"""
