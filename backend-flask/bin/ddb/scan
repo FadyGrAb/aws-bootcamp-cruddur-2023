@@ -1,0 +1,26 @@
+#! /home/gitpod/.pyenv/shims/python3
+
+import boto3
+from sys import argv
+from colorama import Fore, Style, Back
+
+print(Fore.WHITE + Back.CYAN + "=DDB schema load" + Style.RESET_ALL)
+
+attrs = {
+    "endpoint_url": "http://localhost:8000"
+}
+
+if len(argv) == 2:
+    if "prod" == argv[1].lower():
+        print(Fore.RED + "** Using prod" + Style.RESET_ALL)
+        attrs = {}
+
+ddb = boto3.client("dynamodb", **attrs)
+
+table_name = 'cruddur-messages'
+
+response = ddb.scan(TableName=table_name)
+
+items = response['Items']
+for item in items:
+  print(item)

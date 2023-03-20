@@ -1,3 +1,5 @@
+#! /home/gitpod/.pyenv/shims/python3
+
 import boto3
 from sys import argv
 from colorama import Fore, Style, Back
