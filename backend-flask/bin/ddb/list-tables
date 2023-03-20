@@ -1,19 +1,10 @@
 #! /usr/bin/bash
 CYAN='\033[1;36m'
 NO_COLOR='\033[0m'
-LABEL="ddb drop"
+LABEL="ddb list-tables"
 printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 
-if [ -z "$1" ]
-then
-    MESSAGE="No TABLE_NAME argument supplied eg ./bin/ddb/drop cruddur-messages prod "
-    printf "${CYAN}== ${MESSAGE}${NO_COLOR}\n"
-    exit 1
-fi
-
-TABLE_NAME=$1
-
-if [ "$2" = "prod" ]
+if [ "$1" = "prod" ]
 then
     MESSAGE="Using Prod"
     printf "${CYAN}== ${MESSAGE}${NO_COLOR}\n"
@@ -24,7 +15,6 @@ else
     ENDPOINT_URL="--endpoint-url=http://localhost:8000"
 fi
 
-echo "deleting table: $TABLE_NAME"
-
-aws dynamodb delete-table $ENDPOINT_URL \
-    --table-name $TABLE_NAME
+aws dynamodb list-tables $ENDPOINT_URL \
+    --query TableNames \
+    --output table
