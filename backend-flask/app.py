@@ -15,6 +15,7 @@ from services.message_groups import *
 from services.messages import *
 from services.create_message import *
 from services.show_activity import *
+from services.users_short import *
 
 # Honeycomb imports
 from opentelemetry import trace
@@ -43,6 +44,7 @@ from flask import abort, make_response, jsonify
 
 # My cognito middlware implimentation
 from lib.cognito_verifier_middleware import CognitoVerifierMiddleware
+from lib.cognito_verifier_middleware.exceptions import *
 
 app = Flask(__name__)
 
@@ -98,45 +100,77 @@ cognito_jwt_token = CognitoJwtToken(
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
-    if cognito_verifier.token_is_valid:
-        model = MessageGroups.run(cognito_user_id=cognito_verifier.cognito_user_id)
-        # user_handle = 'andrewbrown'
-        if model['errors'] is not None:
-            return model['errors'], 422
+    try:
+        if cognito_verifier.token_is_valid:
+            model = MessageGroups.run(cognito_user_id=cognito_verifier.cognito_user_id)
+            # print("=====> data_message_groups", model)
+            # user_handle = 'andrewbrown'
+            if model['errors'] is not None:
+                return model['errors'], 422
+            else:
+                return model['data'], 200
         else:
-            return model['data'], 200
-    else:
+            # print("=====> data_message_groups, token_is_valid", cognito_verifier.token_is_valid)
+            return {}, 401
+    except TokenNotFoundException as e:
+        print(e)
         return {}, 401
 
 
-@app.route("/api/messages/@<string:handle>", methods=['GET'])
-def data_messages(handle):
-    user_sender_handle = 'andrewbrown'
-    user_receiver_handle = request.args.get('user_reciever_handle')
-
-    model = Messages.run(user_sender_handle=user_sender_handle,
-                         user_receiver_handle=user_receiver_handle)
-    if model['errors'] is not None:
-        return model['errors'], 422
-    else:
-        return model['data'], 200
-    return
+@app.route("/api/messages/<string:message_group_uuid>", methods=['GET'])
+def data_messages(message_group_uuid):
+    try:
+        if cognito_verifier.token_is_valid:
+            # print(">>>>>>>>>>> app.py, messages, message_group_uuid", message_group_uuid)
+            model = Messages.run(
+                message_group_uuid=message_group_uuid,
+                cognito_user_id=cognito_verifier.cognito_user_id
+            )
+            if model['errors'] is not None:
+                return model['errors'], 422
+            else:
+                return model['data'], 200
+        else:
+            return {}, 401
+    except TokenNotFoundException as e:
+        print(e)
+        return {}, 401
+    
 
 
 @app.route("/api/messages", methods=['POST', 'OPTIONS'])
 @cross_origin()
 def data_create_message():
-    user_sender_handle = 'andrewbrown'
-    user_receiver_handle = request.json['user_receiver_handle']
+    user_receiver_handle = request.json.get("handle", None)
+    message_group_uuid = request.json.get("message_group_uuid", None)
     message = request.json['message']
-
-    model = CreateMessage.run(
-        message=message, user_sender_handle=user_sender_handle, user_receiver_handle=user_receiver_handle)
-    if model['errors'] is not None:
-        return model['errors'], 422
-    else:
-        return model['data'], 200
-    return
+    try:
+        if cognito_verifier.token_is_valid:
+            if message_group_uuid == None:
+                # Create for the first time
+                model = CreateMessage.run(
+                    mode="create",
+                    message=message,
+                    cognito_user_id=cognito_verifier.cognito_user_id,
+                    user_receiver_handle=user_receiver_handle
+                )
+            else:
+                # Push onto existing Message Group
+                model = CreateMessage.run(
+                    mode="update",
+                    message=message,
+                    message_group_uuid=message_group_uuid,
+                    cognito_user_id=cognito_verifier.cognito_user_id
+                )
+            if model['errors'] is not None:
+                return model['errors'], 422
+            else:
+                return model['data'], 200
+        else:
+            return {}, 401
+    except TokenNotFoundException as e:
+        print(e)
+        return {}, 401
 
 
 @app.route("/api/activities/home", methods=['GET'])
@@ -268,6 +302,11 @@ def init_rollbar():
 def rollbar_test():
     rollbar.report_message('Hello World!', 'warning')
     return "Hello World!"
+
+@app.route("/api/users/@<string:handle>/short", methods=['GET'])
+def data_users_short(handle):
+  data = UsersShort.run(handle)
+  return data, 200
 
 
 if __name__ == "__main__":

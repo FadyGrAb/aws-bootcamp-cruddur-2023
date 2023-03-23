@@ -10,7 +10,7 @@ class MessageGroups:
       'data': None
     }
  
-    sql = db.template('users','uuid_from_cognito_user_id')
+    sql = db.get_template('users','uuid_from_cognito_user_id')
     my_user_uuid = db.query_value(sql,{
       'cognito_user_id': cognito_user_id
     })

@@ -34,24 +34,22 @@ def get_users():
       users.handle
     FROM users
     WHERE
-      users.handle IN(
+      users.handle IN (
         %(my_handle)s,
         %(other_handle)s
         )
   """
   users = db.query_array_json(sql,{
-    'my_handle':  'andrewbrown',
-    'other_handle': 'bayko'
+    'my_handle':  'fod',
+    'other_handle': 'other_fady'
   })
 
+  print("============> users:\n", users)
   for user in users:
-    if user["handle"] == "andrewbrown":
+    if user["handle"] == "fod":
       my_user = user
-    elif user["handle"] == "bayko":
+    elif user["handle"] == "other_fady":
       other_user = user
-    else:
-      print(user)
-      raise "Other users where returned"
  
   results = {
     'my_user': my_user,

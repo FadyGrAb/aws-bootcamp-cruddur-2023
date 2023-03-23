@@ -38,7 +38,7 @@ class CognitoVerifierMiddleware:
         if auth_header and (" " in auth_header):
             _, access_token = auth_header.split()
         else:
-            raise TokenNotFoundException
+            raise TokenNotFoundException(auth_header)
 
         return access_token
 

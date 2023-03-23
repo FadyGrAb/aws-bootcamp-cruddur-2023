@@ -39,3 +39,4 @@ then
 fi
 echo " "
 bash "$BIN_PATH/seed" $1
+python3 "$BIN_PATH/update_cognito_user_ids"

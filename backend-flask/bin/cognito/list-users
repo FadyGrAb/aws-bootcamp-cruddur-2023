@@ -4,7 +4,7 @@ import boto3
 import os
 import json
 
-userpool_id = os.getenv("AWS_COGNITO_USER_POOL_ID")
+userpool_id = os.getenv("COGNITO_USER_POOL_ID")
 client = boto3.client('cognito-idp')
 params = {
   'UserPoolId': userpool_id,
@@ -24,10 +24,10 @@ for user in users:
   sub = handle = None
   for attr in attrs:
     if attr["Name"] == "sub":
-      sub = attr["Name"]
+      sub = attr["Value"]
     elif attr["Name"] == "preferred_username":
-      handle = attr["Name"]
-  
-  dict_users[handle['Value']] = sub['Value']
+      handle = attr["Value"]
 
+  dict_users[handle] = sub
+  
 print(json.dumps(dict_users, sort_keys=True, indent=2, default=str)) 

@@ -4,7 +4,7 @@ import boto3
 from sys import argv
 from colorama import Fore, Style, Back
 
-print(Fore.WHITE + Back.CYAN + "=DDB schema load" + Style.RESET_ALL)
+print(Fore.WHITE + Back.CYAN + "=DDB scan" + Style.RESET_ALL)
 
 attrs = {
     "endpoint_url": "http://localhost:8000"
