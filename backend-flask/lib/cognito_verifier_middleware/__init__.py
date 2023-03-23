@@ -30,7 +30,8 @@ class CognitoVerifierMiddleware:
 
     @property
     def cognito_user_id(self):
-        return self._token_payload.get("username", "somethin went wrong")
+        # return self._token_payload.get("username", "something went wrong")
+        return self._token_payload.get("sub", "something went wrong")
 
     def _extract_token(self):
         auth_header = request.headers.get("Authorization")

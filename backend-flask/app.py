@@ -98,12 +98,15 @@ cognito_jwt_token = CognitoJwtToken(
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
-    user_handle = 'andrewbrown'
-    model = MessageGroups.run(user_handle=user_handle)
-    if model['errors'] is not None:
-        return model['errors'], 422
+    if cognito_verifier.token_is_valid:
+        model = MessageGroups.run(cognito_user_id=cognito_verifier.cognito_user_id)
+        # user_handle = 'andrewbrown'
+        if model['errors'] is not None:
+            return model['errors'], 422
+        else:
+            return model['data'], 200
     else:
-        return model['data'], 200
+        return {}, 401
 
 
 @app.route("/api/messages/@<string:handle>", methods=['GET'])

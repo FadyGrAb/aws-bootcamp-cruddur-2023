@@ -65,7 +65,7 @@ class Db:
     # print (f"pgcode: {err.pgcode} \n" + Style.RESET_ALL)
 
   def query_commit(self, sql, params={}):
-    self.print_sql('Commit with returning', sql)
+    self.print_sql('Commit with returning', sql, params)
     pattern = r"\bRETURNING\b"
     is_returning_id = re.search(pattern, sql)
     returning_id = None
