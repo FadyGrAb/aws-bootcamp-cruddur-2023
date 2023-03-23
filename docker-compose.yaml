@@ -16,12 +16,13 @@ services:
       AWS_COGNITO_USER_POOL_ID: "${COGNITO_USER_POOL_ID}"
       AWS_COGNITO_USER_POOL_CLIENT_ID: "${COGNITO_USER_CLIENT_ID}"
       COGNITO_VERIFIER_URL: "https://5555-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
-      CONNECTION_URL: "${PROD_CONNECTION_URL}"
-      # CONNECTION_URL: "${CONNECTION_URL}"
+      # CONNECTION_URL: "${PROD_CONNECTION_URL}"
+      CONNECTION_URL: "postgresql://postgres:password@postgres:5432/cruddur" # dev environment
       GITPOD_IP: "${GITPOD_IP}"
       DB_SG_ID: "${DB_SG_ID}"
       DB_SG_RULE_ID: "${DB_SG_RULE_ID}"
       PYTHONUNBUFFERED: TRUE  # To get printed logs in real-time
+      AWS_ENDPOINT_URL: "http://dynamodb-local:8000" # dynamodb-local endpoint url
     build: ./backend-flask
     ports:
       - "4567:4567"
@@ -40,7 +41,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend-react-js:/frontend-react-js
-  db:
+  postgres:
     image: postgres:13-alpine
     restart: always
     environment:
