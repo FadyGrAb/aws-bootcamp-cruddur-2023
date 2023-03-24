@@ -28,4 +28,11 @@ DEMO GIF GOES HERE
 I was able to create a new message for an *existing* message group as follows:  
 DEMO GIF GOES HERE
 ### Implement (Pattern D) Creating a Message for a new Message Group into Application
+I've implemented the "create message for new message groups" as follows:  
+DEMO GIF GOES HERE
 ### Implement (Pattern E) Updating a Message Group using DynamoDB Streams
+I've created the ddb table and GSI and enabled dynamodb steams:  
+streams
+lmabda
+demo
+logs

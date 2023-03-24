@@ -262,7 +262,7 @@ for minute, line in enumerate(lines):
         print(line)
         raise "Invalid Line" 
 
-    created_at = (now + timedelta(minutes=minute)).isoformat()
+    created_at = (now + timedelta(hours=-3) + timedelta(minutes=minute)).isoformat()
     
     create_message(
         client=ddb,

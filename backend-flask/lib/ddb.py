@@ -52,11 +52,11 @@ class Ddb:
   def list_messages(client,message_group_uuid):
     year = str(datetime.now().year)
     table_name = 'cruddur-messages'
-    print('>>>>>>>>>>>>>>>> list messages , message_goupd_uuid', message_group_uuid)
     query_params = {
       'TableName': table_name,
       'KeyConditionExpression': 'pk = :pk AND begins_with(sk,:year)',
       'ScanIndexForward': False,
+      # 'ScanIndexForward': True,
       'Limit': 20,
       'ExpressionAttributeValues': {
         ':year': {'S': year },

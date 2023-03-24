@@ -23,4 +23,5 @@ response = ddb.scan(TableName=table_name)
 
 items = response['Items']
 for item in items:
-  print(item)
+  print(item)  
+#   print(item["sk"]["S"], item["user_handle"]["S"]+":", item["message"]["S"][:30])
