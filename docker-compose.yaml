@@ -22,7 +22,7 @@ services:
       DB_SG_ID: "${DB_SG_ID}"
       DB_SG_RULE_ID: "${DB_SG_RULE_ID}"
       PYTHONUNBUFFERED: TRUE  # To get printed logs in real-time
-      # AWS_ENDPOINT_URL: "http://dynamodb-local:8000" # dynamodb-local endpoint url
+      AWS_ENDPOINT_URL: "http://dynamodb-local:8000" # dynamodb-local endpoint url
     build: ./backend-flask
     ports:
       - "4567:4567"

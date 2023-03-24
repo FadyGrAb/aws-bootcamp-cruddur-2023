@@ -100,7 +100,7 @@ class Ddb:
       Item=record
     )
     # print the response
-    print(response)
+    print(">>> Create ddb message response:", response)
     return {
       'message_group_uuid': message_group_uuid,
       'uuid': my_user_uuid,
