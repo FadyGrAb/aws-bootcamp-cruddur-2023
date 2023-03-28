@@ -1,3 +1,4 @@
+ARG ECR_PYTHON_URL
 FROM $ECR_PYTHON_URL:3.10-slim-buster
 
 WORKDIR /backend-flask

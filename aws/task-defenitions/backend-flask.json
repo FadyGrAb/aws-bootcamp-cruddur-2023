@@ -1,7 +1,7 @@
 {
   "family": "backend-flask",
-  "executionRoleArn": "arn:aws:iam::387543059434:role/CruddurServiceExecutionRole",
-  "taskRoleArn": "arn:aws:iam::387543059434:role/CruddurTaskRole",
+  "executionRoleArn": "arn:aws:iam::********1769:role/CruddurServiceExecutionRole",
+  "taskRoleArn": "arn:aws:iam::********1769:role/CruddurTaskRole",
   "networkMode": "awsvpc",
   "cpu": "256",
   "memory": "512",
@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "backend-flask",
-      "image": "387543059434.dkr.ecr.ca-central-1.amazonaws.com/backend-flask",
+      "image": "********1769.dkr.ecr.us-east-1.amazonaws.com/backend-flask",
       "essential": true,
       "healthCheck": {
         "command": [
@@ -33,7 +33,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "cruddur",
-          "awslogs-region": "ca-central-1",
+          "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "backend-flask"
         }
       },
@@ -45,36 +45,36 @@
         },
         {
           "name": "AWS_COGNITO_USER_POOL_ID",
-          "value": "ca-central-1_CQ4wDfnwc"
+          "value": "us-east-1_bZgLNDnJ2"
         },
         {
           "name": "AWS_COGNITO_USER_POOL_CLIENT_ID",
-          "value": "5b6ro31g97urk767adrbrdj1g5"
+          "value": "1r2sqkiovudim8h9qid999hdpu"
         },
         { "name": "FRONTEND_URL", "value": "*" },
         { "name": "BACKEND_URL", "value": "*" },
-        { "name": "AWS_DEFAULT_REGION", "value": "ca-central-1" }
+        { "name": "AWS_DEFAULT_REGION", "value": "us-east-1" }
       ],
       "secrets": [
         {
           "name": "AWS_ACCESS_KEY_ID",
-          "valueFrom": "arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"
+          "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
-          "valueFrom": "arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY"
+          "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY"
         },
         {
           "name": "CONNECTION_URL",
-          "valueFrom": "arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/CONNECTION_URL"
+          "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/CONNECTION_URL"
         },
         {
           "name": "ROLLBAR_ACCESS_TOKEN",
-          "valueFrom": "arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN"
+          "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN"
         },
         {
           "name": "OTEL_EXPORTER_OTLP_HEADERS",
-          "valueFrom": "arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS"
+          "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS"
         }
       ]
     }
