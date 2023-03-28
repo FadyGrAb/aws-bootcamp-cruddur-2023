@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM {ECR_PYTHON_URL}:3.10-slim-buster
 
 WORKDIR /backend-flask
 

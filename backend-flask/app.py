@@ -98,11 +98,17 @@ cognito_jwt_token = CognitoJwtToken(
 )
 
 
+@app.route('/api/health-check')
+def health_check():
+    return {'success': True}, 200
+
+
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
     try:
         if cognito_verifier.token_is_valid:
-            model = MessageGroups.run(cognito_user_id=cognito_verifier.cognito_user_id)
+            model = MessageGroups.run(
+                cognito_user_id=cognito_verifier.cognito_user_id)
             # print("=====> data_message_groups", model)
             # user_handle = 'andrewbrown'
             if model['errors'] is not None:
@@ -135,7 +141,6 @@ def data_messages(message_group_uuid):
     except TokenNotFoundException as e:
         print(e)
         return {}, 401
-    
 
 
 @app.route("/api/messages", methods=['POST', 'OPTIONS'])
@@ -188,11 +193,11 @@ def data_home():
     # except TokenExpiredError as e:
     #     data = HomeActivities.run(logger=LOGGER)
 
-
-    ### My cognito middleware implimentation
+    # My cognito middleware implimentation
     if cognito_verifier.token_is_valid:
         cognito_user_id = cognito_verifier.cognito_user_id
-        data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
+        data = HomeActivities.run(
+            cognito_user_id=cognito_user_id, logger=LOGGER)
     else:
         data = HomeActivities.run(logger=LOGGER)
     return data, 200
@@ -227,7 +232,7 @@ def data_search():
 @app.route("/api/activities", methods=['POST', 'OPTIONS'])
 @cross_origin()
 def data_activities():
-    
+
     # user_handle = 'andrewbrown'
     user_handle = request.json["user_handle"]
     message = request.json['message']
@@ -298,15 +303,15 @@ def init_rollbar():
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
-@app.route('/rollbar/test')
-def rollbar_test():
-    rollbar.report_message('Hello World!', 'warning')
-    return "Hello World!"
+# @app.route('/rollbar/test')
+# def rollbar_test():
+#     rollbar.report_message('Hello World!', 'warning')
+#     return "Hello World!"
 
 @app.route("/api/users/@<string:handle>/short", methods=['GET'])
 def data_users_short(handle):
-  data = UsersShort.run(handle)
-  return data, 200
+    data = UsersShort.run(handle)
+    return data, 200
 
 
 if __name__ == "__main__":
