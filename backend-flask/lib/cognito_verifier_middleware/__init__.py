@@ -20,7 +20,11 @@ class CognitoVerifierMiddleware:
 
     @property
     def token_is_valid(self):
-        token = self._extract_token()
+        try:
+            token = self._extract_token()
+        except TokenNotFoundException:
+            return False
+        
         cognito_verifier_response = requests.get(
             f"{self._endpoint}/verify?token={token}")
 
