@@ -12,11 +12,11 @@ class CognitoVerifierMiddleware:
         if endpoint:
             self._endpoint = endpoint
         else:
-            pass
-            # raise EndpointNotSetException
+            # pass
+            raise EndpointNotSetException
 
         # Test connection
-        # self._test_conntection()
+        self._test_conntection()
 
     @property
     def token_is_valid(self):
