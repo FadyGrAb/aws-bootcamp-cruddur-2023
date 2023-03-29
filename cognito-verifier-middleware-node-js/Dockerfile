@@ -3,7 +3,7 @@ FROM $ECR_NODEJS_URL:16-alpine
 
 WORKDIR /cognito-verifier-middleware
 
-COPY index.js package-lock.json package.json server.cjs /cognito-verifier-middleware/
+COPY index.js health-check.js package-lock.json package.json server.cjs /cognito-verifier-middleware/
 
 RUN npm install
 

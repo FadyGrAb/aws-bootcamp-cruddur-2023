@@ -57,7 +57,7 @@
         { "name": "PYTHONUNBUFFERED", "value": "TRUE" },
         {
           "name": "COGNITO_VERIFIER_URL",
-          "value": "https://cognito-verifier:5555"
+          "value": "http://cognito-verifier.cruddur:5555"
         }
       ],
       "secrets": [
