@@ -1,5 +1,5 @@
 ARG ECR_NODEJS_URL
-FROM ${ECR_NODEJS_URL}:16-alpine
+FROM $ECR_NODEJS_URL:16-alpine
 
 WORKDIR /cognito-verifier-middleware
 

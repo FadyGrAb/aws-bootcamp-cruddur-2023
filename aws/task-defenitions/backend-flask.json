@@ -57,7 +57,7 @@
         { "name": "PYTHONUNBUFFERED", "value": "TRUE" },
         {
           "name": "COGNITO_VERIFIER_URL",
-          "value": "http://cognito-verifier:5555"
+          "value": "https://cognito-verifier:5555"
         }
       ],
       "secrets": [
@@ -82,48 +82,6 @@
           "valueFrom": "arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS"
         }
       ]
-    },
-    {
-      "name": "cognito-verifier",
-      "image": "********1769.dkr.ecr.us-east-1.amazonaws.com/cognito-verifier",
-      "essential": true,
-      "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "node /cognito-verifier-middleware/health-check.js"
-        ],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      },
-      "portMappings": [
-        {
-          "name": "cognito-verifier",
-          "containerPort": 5555,
-          "protocol": "tcp",
-          "appProtocol": "http"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "cruddur",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "cognito-verifier"
-        }
-      },
-      "environment": [
-        {
-          "name": "AWS_COGNITO_USER_POOL_ID",
-          "value": "us-east-1_bZgLNDnJ2"
-        },
-        {
-          "name": "AWS_COGNITO_USER_POOL_CLIENT_ID",
-          "value": "1r2sqkiovudim8h9qid999hdpu"
-        }
-      ],
-      "secrets": []
     }
   ]
 }

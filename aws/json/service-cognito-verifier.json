@@ -20,17 +20,17 @@
     },
  
     "propagateTags": "SERVICE",
-    "serviceName": "backend-flask",
-    "taskDefinition": "backend-flask",
+    "serviceName": "cognito-verifier",
+    "taskDefinition": "cognito-verifier",
 
     "serviceConnectConfiguration": {
       "enabled": true,
       "namespace": "cruddur",
       "services": [
         {
-          "portName": "backend-flask",
-          "discoveryName": "backend-flask",
-          "clientAliases": [{"port": 4567}]
+          "portName": "cognito-verifier",
+          "discoveryName": "cognito-verifier",
+          "clientAliases": [{"port": 5555}]
         }
       ]
     }
