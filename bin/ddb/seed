@@ -8,7 +8,7 @@ import pathlib
 
 # Modified pathing
 this_file_path = pathlib.Path(__file__)
-backend_path = this_file_path.parents[3] / "backend-flask"
+backend_path = this_file_path.parents[2] / "backend-flask"
 sys.path.append(str(backend_path))
 
 from lib.db import db
