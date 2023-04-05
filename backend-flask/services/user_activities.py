@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from aws_xray_sdk.core import xray_recorder
+# from aws_xray_sdk.core import xray_recorder
 
 
 class UserActivities:
@@ -36,12 +36,12 @@ class UserActivities:
       # xray_recorder.end_subsegment()
 
       # X-ray subsegments
-      subsegment = xray_recorder.begin_subsegment('user_activities_data_mock')
+      # subsegment = xray_recorder.begin_subsegment('user_activities_data_mock')
 
-      # Add subsegment metadata
-      xray_recorder.put_metadata("timestamp", now.isoformat())
-      xray_recorder.put_metadata("response-size", len(model['data']))
+      # # Add subsegment metadata
+      # xray_recorder.put_metadata("timestamp", now.isoformat())
+      # xray_recorder.put_metadata("response-size", len(model['data']))
 
-      xray_recorder.end_subsegment()
+      # xray_recorder.end_subsegment()
 
     return model

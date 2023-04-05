@@ -12,10 +12,7 @@
       "image": "********1769.dkr.ecr.us-east-1.amazonaws.com/backend-flask",
       "essential": true,
       "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "curl http://localhost:4567/api/health-check || exit 1"
-        ],
+        "command": ["CMD-SHELL", "python /backend-flask/bin/health-check"],
         "interval": 30,
         "timeout": 5,
         "retries": 3,

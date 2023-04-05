@@ -92,8 +92,10 @@ class Db:
       with conn.cursor() as cur:
         cur.execute(wrapped_sql,params)
         json = cur.fetchone()
-
-    return json[0]
+    if json is not None:
+      return json[0]
+    else:
+      return {}
 
   def query_value(self, sql, params={}):
     self.print_sql('value', sql, params)
@@ -101,7 +103,10 @@ class Db:
       with conn.cursor() as cur:
         cur.execute(sql, params)
         json = cur.fetchone()
-        return json[0]
+        if json is not None:
+          return json[0]
+        else:
+          return {}
       
   def query_object_json(self,sql,params={}):
     """When we want to return an array of json objects"""
@@ -117,7 +122,7 @@ class Db:
     if json is not None:
       return json[0]
     else:
-      return "{}"
+      return {}
     
   def query_wrap_object(self,template):
     sql = f"""
