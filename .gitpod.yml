@@ -21,7 +21,7 @@ tasks:
       sudo apt install -y postgresql-client-13 libpq-dev
 
       export GITPOD_IP=$(curl ifconfig.me)
-      bash "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/update-sg-rule"
+      bash "$THEIA_WORKSPACE_ROOT/bin/rds/update-sg-rule"
 
   - name: react-js
     command: |
