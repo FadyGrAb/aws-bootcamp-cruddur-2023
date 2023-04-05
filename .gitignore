@@ -1,4 +1,4 @@
 docker
 aws/**/_*
-backend-flask/bin/**/_*
+bin/**/_*
 frontend-react-js/build

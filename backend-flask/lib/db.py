@@ -116,6 +116,8 @@ class Db:
         json = cur.fetchone()
     if json is not None:
       return json[0]
+    else:
+      return "{}"
     
   def query_wrap_object(self,template):
     sql = f"""
