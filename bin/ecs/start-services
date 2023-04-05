@@ -1,0 +1,3 @@
+aws ecs update-service --service cognito-verifier --cluster cruddur --desired-count 1
+aws ecs update-service --service backend-flask --cluster cruddur --desired-count 1
+aws ecs update-service --service frontend-react-js --cluster cruddur --desired-count 1
