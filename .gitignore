@@ -2,3 +2,4 @@ docker
 aws/**/_*
 bin/**/_*
 frontend-react-js/build
+*.env

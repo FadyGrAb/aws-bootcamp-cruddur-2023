@@ -8,6 +8,19 @@
   "requiresCompatibilities": ["FARGATE"],
   "containerDefinitions": [
     {
+      "name": "xray",
+      "image": "public.ecr.aws/xray/aws-xray-daemon",
+      "essential": true,
+      "user": "1337",
+      "portMappings": [
+        {
+          "name": "xray",
+          "containerPort": 2000,
+          "protocol": "udp"
+        }
+      ]
+    },
+    {
       "name": "cognito-verifier",
       "image": "********1769.dkr.ecr.us-east-1.amazonaws.com/cognito-verifier",
       "essential": true,

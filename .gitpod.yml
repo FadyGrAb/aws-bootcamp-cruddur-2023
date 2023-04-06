@@ -6,7 +6,6 @@ tasks:
       cd /workspace
       curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
       sudo dpkg -i session-manager-plugin.deb
-    init: |
       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       unzip awscliv2.zip
       sudo ./aws/install
@@ -14,22 +13,22 @@ tasks:
       session-manager-plugin
 
   - name: postgres
-    init: |
+    before: |
       curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
       echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
-
+    command: |
       export GITPOD_IP=$(curl ifconfig.me)
       bash "$THEIA_WORKSPACE_ROOT/bin/rds/update-sg-rule"
 
   - name: react-js
-    command: |
+    before: |
       cd frontend-react-js
       npm install
 
   - name: oh-my-posh
-    init: |
+    before: |
       sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
       sudo chmod +x /usr/local/bin/oh-my-posh
 
@@ -46,6 +45,10 @@ tasks:
     command: |
       pip install -r backend-flask/requirements.txt
 
+  - name: env-vars
+    command: |
+      ruby "$THEIA_WORKSPACE_ROOT/bin/frontend/generate-env"
+      ruby "$THEIA_WORKSPACE_ROOT/bin/backend/generate-env"
 
 vscode:
   extensions:
