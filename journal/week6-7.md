@@ -27,7 +27,10 @@ The ALB has a rule on the 443 port listener as it forwards the request to the ba
 ![443 rule](assests/week0607/hwrq-0604-rule.png)
 ### Manage your domain using Route53 via hosted zone:
 In Amazon Route53, I've a hosted zone for my domain (it was created by default as I purchashed my domain from AWS).  
-![hosted zone](assests/week0607/hwrq-0701-hostedzones.png)
+![hosted zone](assests/week0607/hwrq-0701-hostedzones.png)  
+
+Demo for using Cruddur over my domain:  
+![domain demo](assests/week0607/hwrq-0702-domain-demo.gif)
 ### Create an SSL cerificate via ACM:
 I've created the SSL manually through the AWS Console in Certificates Manager.  
 ![hosted zone](assests/week0607/hwrq-0801-ssl.png)
@@ -120,3 +123,10 @@ I've created the needed ruby scripts and erb templates. But instead of using `so
 ![env vars](assests//week0607/hwrq-1801-ruby.png)  
 ## Homework challenges:
 ### Running my cognito sidecar as a 3rd service:
+I've created a 3rd service for my sidecar implementation of ***Cognito Verifier*** following the same porcess for the backend and fronten services but this one doesn't belong to any target group. The way my ***backend-flask*** communicates with it is through the internal DNS that Service Connect creates. I had to do some research and some trials to figure out this DNS name but I finally figured it out. In my case it was `http://container-name.cluster-name`.  
+
+cognito-verifier sidecar ECR repos:  
+![repo](assests/week0607/hwch-0101-ecr-repos.png)
+cognito-verifier running task:  
+![task](assests/week0607/hwch-0102-task.png)
+
