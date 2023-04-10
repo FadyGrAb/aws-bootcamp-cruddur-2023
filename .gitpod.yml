@@ -50,6 +50,13 @@ tasks:
       ruby "$THEIA_WORKSPACE_ROOT/bin/frontend/generate-env"
       ruby "$THEIA_WORKSPACE_ROOT/bin/backend/generate-env"
 
+  - name: cdk
+    before: |
+      npm install aws-cdk -g
+      cd thumbing-serverless-cdk
+      cp .env.example .env
+      npm install
+
 vscode:
   extensions:
     - 42Crunch.vscode-openapi
