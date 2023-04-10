@@ -30,7 +30,7 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     console.log('topicName', topicName)
     console.log('functionPath', functionPath)
 
-    // const uploadsBucket = this.createBucket(uploadsBucketName);
+    const uploadsBucket = this.createBucket(uploadsBucketName);
     const assetsBucket = this.importBucket(assetsBucketName);
 
     // create a lambda
@@ -47,17 +47,17 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     this.createSnsSubscription(snsTopic, webhookUrl)
 
     // add our s3 event notifications
-    // this.createS3NotifyToLambda(folderInput, lambda, uploadsBucket)
-    this.createS3NotifyToLambda(folderInput, lambda, assetsBucket)
-    // this.createS3NotifyToSns(folderOutput, snsTopic, assetsBucket)
+    this.createS3NotifyToLambda(folderInput, lambda, uploadsBucket)
+    // this.createS3NotifyToLambda(folderInput, lambda, assetsBucket)
+    this.createS3NotifyToSns(folderOutput, snsTopic, assetsBucket)
 
     // create policies
-    // const s3UploadsReadWritePolicy = this.createPolicyBucketAccess(uploadsBucket.bucketArn)
+    const s3UploadsReadWritePolicy = this.createPolicyBucketAccess(uploadsBucket.bucketArn)
     const s3AssetsReadWritePolicy = this.createPolicyBucketAccess(assetsBucket.bucketArn)
     // const snsPublishPolicy = this.createPolicySnSPublish(snsTopic.topicArn)
 
     // attach policies for permissions
-    // lambda.addToRolePolicy(s3UploadsReadWritePolicy);
+    lambda.addToRolePolicy(s3UploadsReadWritePolicy);
     lambda.addToRolePolicy(s3AssetsReadWritePolicy);
     // lambda.addToRolePolicy(snsPublishPolicy);
   }
@@ -81,6 +81,7 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     assetsBucketName: string,
     folderInput: string,
     folderOutput: string): lambda.IFunction {
+
     const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
@@ -100,8 +101,8 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     const destination = new s3n.LambdaDestination(lambda);
     bucket.addEventNotification(
       s3.EventType.OBJECT_CREATED_PUT,
-      destination,
-      {prefix: prefix} // folder to contain the original images
+      destination
+      // {prefix: prefix} // folder to contain the original images
     )
   }
 
