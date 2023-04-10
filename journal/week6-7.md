@@ -24,7 +24,25 @@ frontend target group showing healthy state:
 backend target group showing healthy state:  
 ![backend-tg](assests/week0607/hwrq-0603-backend-tg.png)  
 The ALB has a rule on the 443 port listener as it forwards the request to the backend target group if the domain URL starts with ***api*** otherwise forwards it to the frontend target group.
-![443 rule](assests/week0607/hwrq-0604-rule.png)
+![443 rule](assests/week0607/hwrq-0604-rule.png)  
+I also managed to export the ALB Access logs to S3 using this S3 bucket policy
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::127311923021:root"
+            },
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws:s3:::cruddur-alb-access-logs-fm/*"
+        }
+    ]
+}
+```
+But it turned out that it burns through S3 Free Tier requests so I've disabled it later.
 ### Manage your domain using Route53 via hosted zone:
 In Amazon Route53, I've a hosted zone for my domain (it was created by default as I purchashed my domain from AWS).  
 ![hosted zone](assests/week0607/hwrq-0701-hostedzones.png)  
