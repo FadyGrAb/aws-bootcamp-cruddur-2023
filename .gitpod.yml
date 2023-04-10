@@ -52,13 +52,14 @@ tasks:
 
   - name: cdk
     before: |
-      cd "$THEIA_WORKSPACE_ROOT/aws/lambdas/process-images"
+      cd aws/lambdas/process-images
       npm install
       npm install aws-cdk -g
-      cd "$THEIA_WORKSPACE_ROOT/thumbing-serverless-cdk"
+      cd ../../../thumbing-serverless-cdk
       cp .env.example .env
       npm install
-      bash "$THIEA_WORKSPACE_ROOT/bin/avatar/build"
+      cd ..
+      bash "bin/avatar/build"
 
 vscode:
   extensions:
