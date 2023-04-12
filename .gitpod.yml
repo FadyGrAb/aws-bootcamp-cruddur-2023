@@ -11,6 +11,7 @@ tasks:
       sudo ./aws/install
       cd $THEIA_WORKSPACE_ROOT
       session-manager-plugin
+      bash bin/ecr/login
 
   - name: postgres
     before: |
