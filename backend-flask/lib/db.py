@@ -64,8 +64,9 @@ class Db:
     # print (f"pgerror: {err.pgerror}")
     # print (f"pgcode: {err.pgcode} \n" + Style.RESET_ALL)
 
-  def query_commit(self, sql, params={}):
-    self.print_sql('Commit with returning', sql, params)
+  def query_commit(self, sql, params={}, verbose=True):
+    if verbose:
+      self.print_sql('Commit with returning', sql, params)
     pattern = r"\bRETURNING\b"
     is_returning_id = re.search(pattern, sql)
     returning_id = None
@@ -82,10 +83,10 @@ class Db:
 
     return returning_id if returning_id is not None else None
 
-  def query_array_json(self, sql, params={}):
+  def query_array_json(self, sql, params={}, verbose=True):
     """when we want to return a json object"""
-
-    self.print_sql('array', sql)
+    if verbose:
+      self.print_sql('array', sql)
     wrapped_sql = self.query_wrap_array(sql)
 
     with self.pool.connection() as conn:
@@ -97,8 +98,9 @@ class Db:
     else:
       return {}
 
-  def query_value(self, sql, params={}):
-    self.print_sql('value', sql, params)
+  def query_value(self, sql, params={}, verbose=True):
+    if verbose:
+      self.print_sql('value', sql, params)
     with self.pool.connection() as conn:
       with conn.cursor() as cur:
         cur.execute(sql, params)
@@ -108,11 +110,11 @@ class Db:
         else:
           return {}
       
-  def query_object_json(self,sql,params={}):
+  def query_object_json(self,sql,params={}, verbose=True):
     """When we want to return an array of json objects"""
-
-    self.print_sql('json',sql)
-    self.print_params(params)
+    if verbose:
+      self.print_sql('json',sql)
+      self.print_params(params)
     wrapped_sql = self.query_wrap_object(sql)
 
     with self.pool.connection() as conn:

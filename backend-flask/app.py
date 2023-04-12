@@ -16,6 +16,7 @@ from services.messages import *
 from services.create_message import *
 from services.show_activity import *
 from services.users_short import *
+from services.update_profile import *
 
 # Honeycomb imports
 from opentelemetry import trace
@@ -261,6 +262,31 @@ def data_activities_reply(activity_uuid):
     else:
         return model['data'], 200
     return
+
+
+@app.route("/api/profile/update", methods=['POST', 'OPTIONS'])
+@cross_origin()
+def data_update_profile():
+    bio = request.json.get('bio', None)
+    display_name = request.json.get('display_name', None)
+    try:
+        if cognito_verifier.token_is_valid:
+            model = UpdateProfile.run(
+                cognito_user_id=cognito_verifier.cognito_user_id,
+                bio=bio,
+                display_name=display_name
+            )
+            if model['errors'] is not None:
+                return model['errors'], 422
+            else:
+                return model['data'], 200
+        else:
+            # unauthenicatied request
+            return {}, 401
+    except TokenNotFoundException as e:
+        print(e)
+        return {}, 401
+
 
 # CloudWatch logging
 
