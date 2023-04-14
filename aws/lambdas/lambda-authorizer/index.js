@@ -14,17 +14,26 @@ const jwtVerifier = CognitoJwtVerifier.create({
 exports.handler = async (event) => {
   console.log("request:", JSON.stringify(event, undefined, 2));
 
-  const jwt = event.headers.authorization;
+  const jwt = event.headers.authorization.split(" ")[1];
+  let isAuthorized = false;
   try {
     const payload = await jwtVerifier.verify(jwt);
     console.log("Access allowed. JWT payload:", payload);
+    isAuthorized = true
   } catch (err) {
     console.error("Access forbidden:", err);
-    return {
-      isAuthorized: false,
+  
+  } finally {
+    const response = {
+      "isAuthorized": isAuthorized,
+      headers: {
+        "Access-Control-Allow-Headers": "*, Authorization",
+        "Access-Control-Allow-Origin": "https://3000-fadygrab-awsbootcampcru-vig6yhzhbn6.ws-eu94.gitpod.io",
+        "Access-Control-Allow-Methods": "OPTIONS,GET,POST"
+      }
     };
+    console.log(response)
+    return response
   }
-  return {
-    isAuthorized: true,
-  };
+  
 };
