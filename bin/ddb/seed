@@ -40,13 +40,13 @@ def get_users():
         )
   """
   users = db.query_array_json(sql,{
-    'my_handle':  'fod',
+    'my_handle':  'fady',
     'other_handle': 'other_fady'
   })
 
   print("============> users:\n", users)
   for user in users:
-    if user["handle"] == "fod":
+    if user["handle"] == "fady":
       my_user = user
     elif user["handle"] == "other_fady":
       other_user = user

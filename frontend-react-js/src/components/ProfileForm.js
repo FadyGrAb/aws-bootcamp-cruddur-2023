@@ -15,22 +15,24 @@ export default function ProfileForm(props) {
 
   const s3uploadkey = async (event) => {
     try {
-      console.log("s3upload");
+      console.log("s3uploadKey");
       const backend_url =
-        "https://hktuwfg9v7.execute-api.us-east-1.amazonaws.com/avatars/key_updload";
+        "https://hktuwfg9v7.execute-api.us-east-1.amazonaws.com/avatars/key_upload";
       await getAccessToken();
       const access_token = localStorage.getItem("access_token");
       const res = await fetch(backend_url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${access_token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          'Origin' : "https://3000-fadygrab-awsbootcampcru-3vebi6gcwyk.ws-eu94.gitpod.io",
+          'Authorization': `Bearer ${access_token}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         },
       });
       let data = await res.json();
       if (res.status === 200) {
         console.log("presigned url", data);
+        return data.url
       } else {
         console.log(res);
       }
@@ -47,11 +49,12 @@ export default function ProfileForm(props) {
     const type = file.type;
     const preview_image_url = URL.createObjectURL(file);
     console.log(filename, size, type);
-
+    const presignedurl = await s3uploadkey()
+    console.log('pp', presignedurl)
     try {
       console.log("s3upload");
       const backend_url = "";
-      const res = await fetch(backend_url, {
+      const res = await fetch(presignedurl, {
         method: "PUT",
         body: file,
         headers: {
