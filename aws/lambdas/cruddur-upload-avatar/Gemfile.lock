@@ -18,12 +18,15 @@ GEM
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
     jmespath (1.6.2)
+    ox (2.14.16)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES
   aws-sdk-s3
+  ox
 
 BUNDLED WITH
    2.1.4
