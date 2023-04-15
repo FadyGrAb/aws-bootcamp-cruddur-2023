@@ -23,7 +23,7 @@ export default function ProfileForm(props) {
       const res = await fetch(backend_url, {
         method: "POST",
         headers: {
-          'Origin' : "https://3000-fadygrab-awsbootcampcru-3vebi6gcwyk.ws-eu94.gitpod.io",
+          // 'Origin' : "https://3000-fadygrab-awsbootcampcru-3vebi6gcwyk.ws-eu94.gitpod.io",
           'Authorization': `Bearer ${access_token}`,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -53,7 +53,6 @@ export default function ProfileForm(props) {
     console.log('pp', presignedurl)
     try {
       console.log("s3upload");
-      const backend_url = "";
       const res = await fetch(presignedurl, {
         method: "PUT",
         body: file,
@@ -61,9 +60,8 @@ export default function ProfileForm(props) {
           "Content-Type": type,
         },
       });
-      let data = await res.json();
       if (res.status === 200) {
-        console.log("presigned url", data);
+        console.log(res);
       } else {
         console.log(res);
       }
