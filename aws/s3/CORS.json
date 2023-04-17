@@ -1,8 +1,11 @@
 [
   {
     "AllowedHeaders": ["*"],
-    "AllowedMethods": ["POST", "PUT", "GET"],
-    "AllowedOrigins": ["https://*.gitpod.io", "https://*.crudderme.click"],
+    "AllowedMethods": ["PUT"],
+    "AllowedOrigins": [
+      "https://3000-fadygrab-*.gitpod.io",
+      "https://*.crudderme.click"
+    ],
     "ExposeHeaders": []
   }
 ]
