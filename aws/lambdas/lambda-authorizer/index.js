@@ -19,21 +19,19 @@ exports.handler = async (event) => {
   try {
     const payload = await jwtVerifier.verify(jwt);
     console.log("Access allowed. JWT payload:", payload);
-    isAuthorized = true
+    isAuthorized = true;
   } catch (err) {
     console.error("Access forbidden:", err);
-  
   } finally {
     const response = {
-      "isAuthorized": isAuthorized,
-      headers: {
-        "Access-Control-Allow-Headers": "*, Authorization",
-        "Access-Control-Allow-Origin": "https://3000-fadygrab-awsbootcampcru-vig6yhzhbn6.ws-eu94.gitpod.io",
-        "Access-Control-Allow-Methods": "OPTIONS,GET,POST"
-      }
+      isAuthorized: isAuthorized, //,
+      // headers: {
+      //   "Access-Control-Allow-Headers": "*, Authorization",
+      //   "Access-Control-Allow-Origin": "https://3000-fadygrab-awsbootcampcru-vig6yhzhbn6.ws-eu94.gitpod.io",
+      //   "Access-Control-Allow-Methods": "OPTIONS,GET,POST"
+      // }
     };
-    console.log(response)
-    return response
+    console.log(response);
+    return response;
   }
-  
 };
