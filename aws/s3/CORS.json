@@ -1,0 +1,8 @@
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["POST", "PUT", "GET"],
+    "AllowedOrigins": ["https://*.gitpod.io", "https://*.crudderme.click"],
+    "ExposeHeaders": []
+  }
+]

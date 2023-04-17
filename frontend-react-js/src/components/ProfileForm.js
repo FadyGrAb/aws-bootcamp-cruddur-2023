@@ -4,35 +4,34 @@ import process from "process";
 import { getAccessToken } from "lib/CheckAuth";
 
 export default function ProfileForm(props) {
-  const [bio, setBio] = React.useState(0);
-  const [displayName, setDisplayName] = React.useState(0);
+  const [bio, setBio] = React.useState("");
+  const [displayName, setDisplayName] = React.useState("");
 
   React.useEffect(() => {
-    console.log("useEffects", props);
-    setBio(props.profile.bio);
+    // console.log("useEffects", props);
+    setBio(props.profile.bio || "");
     setDisplayName(props.profile.display_name);
   }, [props.profile]);
 
   const s3uploadkey = async (event) => {
     try {
       console.log("s3uploadKey");
-      const backend_url =
-        "https://hktuwfg9v7.execute-api.us-east-1.amazonaws.com/avatars/key_upload";
+      const backend_url = process.env.REACT_APP_API_GATEWAY_ENDPOINT_URL;
       await getAccessToken();
       const access_token = localStorage.getItem("access_token");
       const res = await fetch(backend_url, {
         method: "POST",
         headers: {
           // 'Origin' : "https://3000-fadygrab-awsbootcampcru-3vebi6gcwyk.ws-eu94.gitpod.io",
-          'Authorization': `Bearer ${access_token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${access_token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
       });
       let data = await res.json();
       if (res.status === 200) {
         console.log("presigned url", data);
-        return data.url
+        return data.url;
       } else {
         console.log(res);
       }
@@ -41,16 +40,16 @@ export default function ProfileForm(props) {
     }
   };
   const s3upload = async (event) => {
-    console.log("event", event);
+    // console.log("event", event);
     const file = event.target.files[0];
-    console.log("file", file);
+    // console.log("file", file);
     const filename = file.name;
     const size = file.size;
     const type = file.type;
     const preview_image_url = URL.createObjectURL(file);
-    console.log(filename, size, type);
-    const presignedurl = await s3uploadkey()
-    console.log('pp', presignedurl)
+    // console.log(filename, size, type);
+    const presignedurl = await s3uploadkey();
+    // console.log("pp", presignedurl);
     try {
       console.log("s3upload");
       const res = await fetch(presignedurl, {
@@ -61,9 +60,9 @@ export default function ProfileForm(props) {
         },
       });
       if (res.status === 200) {
-        console.log(res);
+        console.log("Success", res);
       } else {
-        console.log(res);
+        console.log("Error", res);
       }
     } catch (err) {
       console.log(err);
@@ -73,10 +72,10 @@ export default function ProfileForm(props) {
   const onsubmit = async (event) => {
     event.preventDefault();
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/profile/update`;
+      const gateway_url = `${process.env.REACT_APP_BACKEND_URL}/api/profile/update`;
       await getAccessToken();
       const access_token = localStorage.getItem("access_token");
-      const res = await fetch(backend_url, {
+      const res = await fetch(gateway_url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${access_token}`,
@@ -126,9 +125,9 @@ export default function ProfileForm(props) {
             </div>
           </div>
           <div className="popup_content">
-            <div className="upload" onClick={s3uploadkey}>
+            {/* <div className="upload" onClick={s3uploadkey}>
               Upload Avatar
-            </div>
+            </div> */}
             <input type="file" name="avatarupload" onChange={s3upload} />
 
             <div className="field display_name">

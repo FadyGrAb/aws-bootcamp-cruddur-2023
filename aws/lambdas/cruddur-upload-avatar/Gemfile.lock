@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     aws-eventstream (1.2.0)
-    aws-partitions (1.747.0)
+    aws-partitions (1.744.0)
     aws-sdk-core (3.171.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
@@ -18,15 +18,16 @@ GEM
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
     jmespath (1.6.2)
-    ox (2.14.16)
+    jwt (2.7.0)
+    ox (2.14.15)
 
 PLATFORMS
-  ruby
-  x64-mingw32
+  x86_64-linux
 
 DEPENDENCIES
   aws-sdk-s3
+  jwt
   ox
 
 BUNDLED WITH
-   2.1.4
+   2.4.9
