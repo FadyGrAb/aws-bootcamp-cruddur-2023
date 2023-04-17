@@ -13,14 +13,18 @@ export default function ProfileForm(props) {
     setDisplayName(props.profile.display_name);
   }, [props.profile]);
 
-  const s3uploadkey = async (event) => {
+  const s3uploadkey = async (extension) => {
     try {
       console.log("s3uploadKey");
-      const backend_url = process.env.REACT_APP_API_GATEWAY_ENDPOINT_URL;
+      const gateway_url = `${process.env.REACT_APP_API_GATEWAY_ENDPOINT_URL}/avatars/key_upload`;
       await getAccessToken();
       const access_token = localStorage.getItem("access_token");
-      const res = await fetch(backend_url, {
+      const json = {
+        extension: extension
+      }
+      const res = await fetch(gateway_url, {
         method: "POST",
+        body: JSON.stringify(json),
         headers: {
           // 'Origin' : "https://3000-fadygrab-awsbootcampcru-3vebi6gcwyk.ws-eu94.gitpod.io",
           Authorization: `Bearer ${access_token}`,
@@ -48,8 +52,10 @@ export default function ProfileForm(props) {
     const type = file.type;
     const preview_image_url = URL.createObjectURL(file);
     // console.log(filename, size, type);
-    const presignedurl = await s3uploadkey();
     // console.log("pp", presignedurl);
+    const fileparts = filename.split('.')
+    const extension = fileparts[fileparts.length-1]
+    const presignedurl = await s3uploadkey(extension);
     try {
       console.log("s3upload");
       const res = await fetch(presignedurl, {
@@ -72,10 +78,10 @@ export default function ProfileForm(props) {
   const onsubmit = async (event) => {
     event.preventDefault();
     try {
-      const gateway_url = `${process.env.REACT_APP_BACKEND_URL}/api/profile/update`;
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/profile/update`;
       await getAccessToken();
       const access_token = localStorage.getItem("access_token");
-      const res = await fetch(gateway_url, {
+      const res = await fetch(backend_url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${access_token}`,
