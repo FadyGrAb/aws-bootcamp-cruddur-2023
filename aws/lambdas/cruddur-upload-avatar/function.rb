@@ -4,13 +4,18 @@ require 'jwt'
 
 def handler(event:, context:)
   puts event
+  origin = event["headers"]["origin"]
+  puts("origin", origin)
+  if /https:\/\/3000-fadygrab-awsbootcampcru-(.+)\.gitpod\.io/.match(origin).nil? # if no match return the prod domain
+    origin = "api.crudderme.click"
+  end
   # return cors headers for preflight check
   if event['routeKey'] == "OPTIONS /{proxy+}"
     puts({step: 'preflight', message: 'preflight CORS check'}.to_json)
     { 
       headers: {
         "Access-Control-Allow-Headers": "*, Authorization",
-        "Access-Control-Allow-Origin": "https://3000-fadygrab-*.gitpod.io, https://*.crudderme.click",
+        "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "OPTIONS, GET, POST"
       },
       statusCode: 200
@@ -19,6 +24,7 @@ def handler(event:, context:)
     token = event['headers']['authorization'].split(' ')[1]
     puts({step: 'presignedurl', access_token: token}.to_json)
 
+    puts("body", event["body"])
     body_hash = JSON.parse(event["body"])
     extension = body_hash["extension"]
 
@@ -38,7 +44,7 @@ def handler(event:, context:)
     { 
       headers: {
         "Access-Control-Allow-Headers": "*, Authorization",
-        "Access-Control-Allow-Origin": "https://3000-fadygrab-*.gitpod.io, https://*.crudderme.click",
+        "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "OPTIONS, GET, POST"
       },
       statusCode: 200, 

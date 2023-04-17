@@ -1,7 +1,10 @@
 import './ProfileAvatar.css';
 
 export default function ProfileAvatar(props) {
-  const backgroundImage = `url("https://assets.crudderme.click/avatars/${props.id}.jpg")`;
+  var backgroundImage = "none"
+  if (props.id != null) {
+    backgroundImage = `url("https://assets.crudderme.click/avatars/${props.id}.jpg")`
+  } 
   const styles = {
     backgroundImage: backgroundImage,
     backgroundSize: 'cover',
