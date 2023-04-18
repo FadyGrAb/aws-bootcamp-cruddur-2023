@@ -6,7 +6,8 @@ def handler(event:, context:)
   puts event
   origin = event["headers"]["origin"]
   puts("origin", origin)
-  if /https:\/\/3000-fadygrab-awsbootcampcru-(.+)\.gitpod\.io/.match(origin).nil? # if no match return the prod domain
+  dev_url = "https:\/\/3000-fadygrab-awsbootcampcru-(.+)\.gitpod\.io"
+  if /#{dev_url}/.match(origin).nil? # if no match return the prod domain
     origin = "api.crudderme.click"
   end
   # return cors headers for preflight check

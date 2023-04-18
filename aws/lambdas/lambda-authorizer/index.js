@@ -12,7 +12,7 @@ const jwtVerifier = CognitoJwtVerifier.create({
 });
 
 exports.handler = async (event) => {
-  console.log("request:", JSON.stringify(event, undefined, 2));
+  // console.log("request:", JSON.stringify(event, undefined, 2));
 
   const jwt = event.headers.authorization.split(" ")[1];
   let isAuthorized = false;
@@ -27,11 +27,11 @@ exports.handler = async (event) => {
       isAuthorized: isAuthorized, //,
       // headers: {
       //   "Access-Control-Allow-Headers": "*, Authorization",
-      //   "Access-Control-Allow-Origin": "https://3000-fadygrab-awsbootcampcru-vig6yhzhbn6.ws-eu94.gitpod.io",
+      //   "Access-Control-Allow-Origin": "https://3000-fadygrab-awsbootcampcru-qkpaklot8q4.ws-eu94.gitpod.io",
       //   "Access-Control-Allow-Methods": "OPTIONS,GET,POST"
       // }
     };
-    console.log(response);
+    console.log("response", response);
     return response;
   }
 };
