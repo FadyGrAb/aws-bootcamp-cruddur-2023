@@ -39,7 +39,8 @@ timestamp = str(time.time()).split(".")[0]
 filename = f"{timestamp}_{name}.py"
 ...
 ```
-***TODO: Migration Demo***
+Migration demo:
+![migration demo](assests/week08/hwreq-0501-migration.gif)
 ### Presigned URL generation via Ruby Lambda:
 I've generated a presigned URL using the Ruby lambda function and implemented a conditional run depending on the calling HTTP method either OPTIONS (CORS preflight) or POST. And used it to successfully upload the file to the S3 bucket. I made sure to set the response's CORS headers and the S3 CORS policy are correct first.
 ***TODO: Calling API gatway dev/tools***  

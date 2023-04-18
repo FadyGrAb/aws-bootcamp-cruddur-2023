@@ -6,6 +6,7 @@ import ProfileAvatar from 'components/ProfileAvatar'
 export default function ProfileHeading(props) {
   const backgroundImage =
     'url("https://assets.crudderme.click/banners/banner.jpg")';
+  // console.log("ProfileHeading", props)
   const styles = {
     backgroundImage: backgroundImage,
     backgroundSize: "cover",
