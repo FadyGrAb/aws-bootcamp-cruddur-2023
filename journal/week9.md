@@ -27,8 +27,8 @@ I've configured the CodePipeline and integrated the CodeBuild project just confi
 * Successful pipeline run:
 ![Successful run](assests/week09/hwreq-0204-successful-deployment.png)
 * Pipeline run demo:
-![pipeline run](assests/week09/hwreq-0206-codepipeline-demo.gif)
+![pipeline run](assests/week09/hwreq-0207-codepipeline-demo.gif)
 * Api health check before the deployment (shows ver 1):
-![before build](assests/week09/hwreq-0204-before-deployment.png)
+![before build](assests/week09/hwreq-0205-before-deployment.png)
 * Api health check after the deployment (shows ver 2):
-![before build](assests/week09/hwreq-0205-after-deployment.png)
+![before build](assests/week09/hwreq-0206-after-deployment.png)
