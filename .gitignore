@@ -4,3 +4,4 @@ bin/**/_*
 frontend-react-js/build
 *.env
 node_modules
+.vscode

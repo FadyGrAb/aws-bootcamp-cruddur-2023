@@ -69,20 +69,20 @@ RequestsInstrumentor().instrument()
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler('cruddur')
+cw_handler = watchtower.CloudWatchLogHandler("cruddur")
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
 LOGGER.info("test-log")
 
 # Init Rollbar
-rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+rollbar_access_token = os.getenv("ROLLBAR_ACCESS_TOKEN")
 
 # Init my cognito middleware
 cognito_verifier = CognitoVerifierMiddleware(app)
 
 
-frontend = os.getenv('FRONTEND_URL')
-backend = os.getenv('BACKEND_URL')
+frontend = os.getenv("FRONTEND_URL")
+backend = os.getenv("BACKEND_URL")
 origins = [frontend, backend]
 cors = CORS(
     app,
@@ -99,23 +99,22 @@ cognito_jwt_token = CognitoJwtToken(
 )
 
 
-@app.route('/api/health-check')
+@app.route("/api/health-check")
 def health_check():
-    return {'success': True, "ver": 1}, 200
+    return {"success": True, "ver": 2}, 200
 
 
-@app.route("/api/message_groups", methods=['GET'])
+@app.route("/api/message_groups", methods=["GET"])
 def data_message_groups():
     try:
         if cognito_verifier.token_is_valid:
-            model = MessageGroups.run(
-                cognito_user_id=cognito_verifier.cognito_user_id)
+            model = MessageGroups.run(cognito_user_id=cognito_verifier.cognito_user_id)
             # print("=====> data_message_groups", model)
             # user_handle = 'andrewbrown'
-            if model['errors'] is not None:
-                return model['errors'], 422
+            if model["errors"] is not None:
+                return model["errors"], 422
             else:
-                return model['data'], 200
+                return model["data"], 200
         else:
             # print("=====> data_message_groups, token_is_valid", cognito_verifier.token_is_valid)
             return {}, 401
@@ -124,19 +123,19 @@ def data_message_groups():
         return {}, 401
 
 
-@app.route("/api/messages/<string:message_group_uuid>", methods=['GET'])
+@app.route("/api/messages/<string:message_group_uuid>", methods=["GET"])
 def data_messages(message_group_uuid):
     try:
         if cognito_verifier.token_is_valid:
             # print(">>>>>>>>>>> app.py, messages, message_group_uuid", message_group_uuid)
             model = Messages.run(
                 message_group_uuid=message_group_uuid,
-                cognito_user_id=cognito_verifier.cognito_user_id
+                cognito_user_id=cognito_verifier.cognito_user_id,
             )
-            if model['errors'] is not None:
-                return model['errors'], 422
+            if model["errors"] is not None:
+                return model["errors"], 422
             else:
-                return model['data'], 200
+                return model["data"], 200
         else:
             return {}, 401
     except TokenNotFoundException as e:
@@ -144,12 +143,12 @@ def data_messages(message_group_uuid):
         return {}, 401
 
 
-@app.route("/api/messages", methods=['POST', 'OPTIONS'])
+@app.route("/api/messages", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_create_message():
     user_receiver_handle = request.json.get("handle", None)
     message_group_uuid = request.json.get("message_group_uuid", None)
-    message = request.json['message']
+    message = request.json["message"]
     try:
         if cognito_verifier.token_is_valid:
             if message_group_uuid == None:
@@ -158,7 +157,7 @@ def data_create_message():
                     mode="create",
                     message=message,
                     cognito_user_id=cognito_verifier.cognito_user_id,
-                    user_receiver_handle=user_receiver_handle
+                    user_receiver_handle=user_receiver_handle,
                 )
             else:
                 # Push onto existing Message Group
@@ -166,12 +165,12 @@ def data_create_message():
                     mode="update",
                     message=message,
                     message_group_uuid=message_group_uuid,
-                    cognito_user_id=cognito_verifier.cognito_user_id
+                    cognito_user_id=cognito_verifier.cognito_user_id,
                 )
-            if model['errors'] is not None:
-                return model['errors'], 422
+            if model["errors"] is not None:
+                return model["errors"], 422
             else:
-                return model['data'], 200
+                return model["data"], 200
         else:
             return {}, 401
     except TokenNotFoundException as e:
@@ -179,7 +178,7 @@ def data_create_message():
         return {}, 401
 
 
-@app.route("/api/activities/home", methods=['GET'])
+@app.route("/api/activities/home", methods=["GET"])
 def data_home():
     ### Video Class implementation ###
     # access_token = CognitoJwtToken.extract_access_token(request.headers)
@@ -197,89 +196,87 @@ def data_home():
     # My cognito middleware implimentation
     if cognito_verifier.token_is_valid:
         cognito_user_id = cognito_verifier.cognito_user_id
-        data = HomeActivities.run(
-            cognito_user_id=cognito_user_id, logger=LOGGER)
+        data = HomeActivities.run(cognito_user_id=cognito_user_id, logger=LOGGER)
     else:
         data = HomeActivities.run(logger=LOGGER)
     return data, 200
 
 
-@app.route("/api/activities/notifications", methods=['GET'])
+@app.route("/api/activities/notifications", methods=["GET"])
 def data_notifications():
     data = NotifictionsActivities.run()
     return data, 200
 
 
-@app.route("/api/activities/@<string:handle>", methods=['GET'])
+@app.route("/api/activities/@<string:handle>", methods=["GET"])
 def data_handle(handle):
     model = UserActivities.run(handle)
-    if model['errors'] is not None:
-        return model['errors'], 422
+    if model["errors"] is not None:
+        return model["errors"], 422
     else:
-        return model['data'], 200
+        return model["data"], 200
 
 
-@app.route("/api/activities/search", methods=['GET'])
+@app.route("/api/activities/search", methods=["GET"])
 def data_search():
-    term = request.args.get('term')
+    term = request.args.get("term")
     model = SearchActivities.run(term)
-    if model['errors'] is not None:
-        return model['errors'], 422
+    if model["errors"] is not None:
+        return model["errors"], 422
     else:
-        return model['data'], 200
+        return model["data"], 200
     return
 
 
-@app.route("/api/activities", methods=['POST', 'OPTIONS'])
+@app.route("/api/activities", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_activities():
-
     # user_handle = 'andrewbrown'
     user_handle = request.json["user_handle"]
-    message = request.json['message']
-    ttl = request.json['ttl']
+    message = request.json["message"]
+    ttl = request.json["ttl"]
     model = CreateActivity.run(message, user_handle, ttl)
-    if model['errors'] is not None:
-        return model['errors'], 422
+    if model["errors"] is not None:
+        return model["errors"], 422
     else:
-        return model['data'], 200
+        return model["data"], 200
 
 
-@app.route("/api/activities/<string:activity_uuid>", methods=['GET'])
+@app.route("/api/activities/<string:activity_uuid>", methods=["GET"])
 def data_show_activity(activity_uuid):
     data = ShowActivities.run(activity_uuid=activity_uuid)
     return data, 200
 
 
-@app.route("/api/activities/<string:activity_uuid>/reply", methods=['POST', 'OPTIONS'])
+@app.route("/api/activities/<string:activity_uuid>/reply", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_activities_reply(activity_uuid):
-    user_handle = 'andrewbrown'
-    message = request.json['message']
+    user_handle = "andrewbrown"
+    message = request.json["message"]
     model = CreateReply.run(message, user_handle, activity_uuid)
-    if model['errors'] is not None:
-        return model['errors'], 422
+    if model["errors"] is not None:
+        return model["errors"], 422
     else:
-        return model['data'], 200
+        return model["data"], 200
     return
 
 
-@app.route("/api/profile/update", methods=['POST', 'OPTIONS'])
+@app.route("/api/profile/update", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_update_profile():
-    bio = request.json.get('bio', None)
-    display_name = request.json.get('display_name', None)
+    bio = request.json.get("bio", None)
+    display_name = request.json.get("display_name", None)
     try:
         if cognito_verifier.token_is_valid:
             model = UpdateProfile.run(
                 cognito_user_id=cognito_verifier.cognito_user_id,
                 bio=bio,
-                display_name=display_name
+                display_name=display_name,
             )
-            if model['errors'] is not None:
-                return model['errors'], 422
+            if model["errors"] is not None:
+                return model["errors"], 422
             else:
-                return model['data'], 200
+                return model["data"], 200
         else:
             # unauthenicatied request
             return {}, 401
@@ -304,11 +301,12 @@ def init_rollbar():
         # access token
         rollbar_access_token,
         # environment name
-        'production',
+        "production",
         # server root directory, makes tracebacks prettier
         root=os.path.dirname(os.path.realpath(__file__)),
         # flask already sets up logging
-        allow_logging_basic_config=False)
+        allow_logging_basic_config=False,
+    )
 
     # Homework challenge
     # Payload modifier
@@ -320,7 +318,8 @@ def init_rollbar():
         payload["data"]["user.id"] = user_id
         payload["data"]["user.type"] = random.choice(["standard", "premium"])
         payload["data"]["user.team"] = random.choice(
-            ["red team", "blue team", "green team", "yellow team"])
+            ["red team", "blue team", "green team", "yellow team"]
+        )
         return payload
 
     rollbar.events.add_payload_handler(rollbar_payload_handler)
@@ -334,7 +333,8 @@ def init_rollbar():
 #     rollbar.report_message('Hello World!', 'warning')
 #     return "Hello World!"
 
-@app.route("/api/users/@<string:handle>/short", methods=['GET'])
+
+@app.route("/api/users/@<string:handle>/short", methods=["GET"])
 def data_users_short(handle):
     data = UsersShort.run(handle)
     return data, 200
