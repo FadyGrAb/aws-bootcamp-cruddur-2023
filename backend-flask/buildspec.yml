@@ -5,18 +5,20 @@ phases:
     runtime-versions:
       docker: 20
     commands:
+      - export IMAGE_URL="$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com"
       - echo "cd into $CODEBUILD_SRC_DIR/backend-flask"
       - cd $CODEBUILD_SRC_DIR/backend-flask
-      - echo $IMAGE_URL
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $IMAGE_URL
   build:
     commands:
+      - export IMAGE_URL="$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com"
       - echo Build started on `date`
       - echo Building the Docker image...          
       - docker build --build-arg ECR_PYTHON_URL=$IMAGE_URL/cruddur-python -t backend-flask -f Dockerfile.prod .
       - "docker tag $REPO_NAME $IMAGE_URL/$REPO_NAME"
   post_build:
     commands:
+      - export IMAGE_URL="$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com"
       - echo Build completed on `date`
       - echo Pushing the Docker image..
       - docker push $IMAGE_URL/$REPO_NAME
@@ -28,7 +30,6 @@ env:
   variables:
     AWS_DEFAULT_REGION: us-east-1
     CONTAINER_NAME: backend-flask
-    IMAGE_URL: ${AWS_ACCOUNT_ID}".dkr.ecr.us-east-1.amazonaws.com"
     REPO_NAME: backend-flask:latest
 artifacts:
   files:
