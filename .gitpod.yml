@@ -72,6 +72,7 @@ tasks:
       git clone https://github.com/FadyGrAb/git-hooks.git
       cd git-hooks
       pip install .
+      cd ../aws-bootcamp-cruddur-2023
       git-hooks init mask
 
 vscode:
