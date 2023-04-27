@@ -74,6 +74,7 @@ tasks:
       pip install .
       cd ../aws-bootcamp-cruddur-2023
       git-hooks init mask
+      chmod 744 .git/hooks/pre-commit
 
 vscode:
   extensions:
