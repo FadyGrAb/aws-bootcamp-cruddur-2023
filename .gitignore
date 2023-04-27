@@ -5,3 +5,4 @@ frontend-react-js/build
 *.env
 node_modules
 .vscode
+_unmasked_*
