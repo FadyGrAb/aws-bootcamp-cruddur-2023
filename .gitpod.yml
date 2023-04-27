@@ -66,6 +66,14 @@ tasks:
       cd ..
       bash "bin/avatar/build"
 
+  - name: git-hooks
+    before: |
+      cd /workspace
+      git clone https://github.com/FadyGrAb/git-hooks.git
+      cd git-hooks
+      pip install .
+      git-hooks init mask
+
 vscode:
   extensions:
     - 42Crunch.vscode-openapi
