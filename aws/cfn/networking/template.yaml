@@ -199,7 +199,7 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}PublicSubnetIds"
   PrivateSubnetIds:
-    Value: !Join 
+    Value: !Join
       - ","
       - - !Ref SubnetPriv1
         - !Ref SubnetPriv2

@@ -35,6 +35,9 @@ Parameters:
   TaskFamilyBackend:
     Type: String
     Default: backend-flask
+  EcrImageBackend:
+    Type: String
+    Default: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/backend-flask'
   ServiceNameCognitoVerifier:
     Type: String
     Default: cognito-verifier
@@ -44,9 +47,6 @@ Parameters:
   TaskFamilyCognitoVerifier:
     Type: String
     Default: cognito-verifier
-  EcrImageBackend:
-    Type: String
-    Default: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/backend-flask'
   EcrImageCognitoVerifier:
     Type: String
     Default: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/cognito-verifier'
@@ -403,3 +403,9 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+
+Outputs:
+  ServiceSecurityGroupId:
+    Value: !GetAtt ServiceSG.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"
