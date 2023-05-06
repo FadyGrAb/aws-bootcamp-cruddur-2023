@@ -37,7 +37,7 @@ Parameters:
     Default: backend-flask
   EcrImageBackend:
     Type: String
-    Default: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/backend-flask'
+    Default: "********1769.dkr.ecr.us-east-1.amazonaws.com/backend-flask"
   ServiceNameCognitoVerifier:
     Type: String
     Default: cognito-verifier
@@ -49,7 +49,7 @@ Parameters:
     Default: cognito-verifier
   EcrImageCognitoVerifier:
     Type: String
-    Default: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/cognito-verifier'
+    Default: '********1769.dkr.ecr.us-east-1.amazonaws.com/cognito-verifier'
   EnvOtelServiceName:
     Type: String
     Default: backend-flask
@@ -68,49 +68,32 @@ Parameters:
   EnvBackendUrl:
     Type: String
     Default: "https://api.crudderme.click"
-  EnvAWSDefaultRegion:
-    Type: String
-    Default: "us-east-1"
+  # EnvAWSDefaultRegion:
+  #   Type: String
+  #   Default: "us-east-1"
   EnvPythonunbuffered:
     Type: String
     Default: "TRUE"
   EnvCognitoVerifierUrl:
     Type: String
-    Default: "http://cognito-verifier.cruddur:5555"
+    Default: "http://cognito-verifier-cfn.cruddur:5555"
   SecretsAWSAccessKeyId:
     Type: String
-    Default: !Sub 'arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
+    Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
   SecretsSecretAccessKey:
     Type: String
-    Default: !Sub 'arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY'
+    Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY'
   SecretsConnectionUrl:
     Type: String
-    Default: !Sub 'arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/cruddur/backend-flask/CONNECTION_URL'
+    Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/CONNECTION_URL'
   SecretsRollbarAccessToken:
     Type: String
-    Default: !Sub 'arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN'
+    Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN'
   SecretsOtelExporterOltpHeaders:
     Type: String
-    Default: !Sub 'arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
+    Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
   
 Resources:
-  ServiceSG:
-    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub "${AWS::StackName}AlbSG"
-      GroupDescription: Public Facing SG for our Cruddur ALB
-      VpcId:
-        Fn::ImportValue:
-          !Sub ${NetworkingStack}VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          SourceSecurityGroupId:
-            Fn::ImportValue:
-              !Sub ${ClusterStack}ALBSecurityGroupId
-          FromPort: 80
-          ToPort: 80
-          Description: ALB HTTP
   FargateServiceBackend:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html
     Type: AWS::ECS::Service
@@ -123,7 +106,7 @@ Resources:
       DesiredCount: 1
       EnableECSManagedTags: true
       EnableExecuteCommand: true
-      HealthCheckGracePeriodSeconds: 100
+      HealthCheckGracePeriodSeconds: 0
       LaunchType: FARGATE
       LoadBalancers:
         - TargetGroupArn:
@@ -135,7 +118,8 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !GetAtt ServiceSG.GroupId
+            - Fn::ImportValue:
+                !Sub "${ClusterStack}ServiceSecurityGroupId"
           Subnets:
             Fn::Split:
               - ","
@@ -149,7 +133,7 @@ Resources:
         # TODO - If you want to log
         # LogConfiguration
         Services:
-          - DiscoveryName: backend-flask
+          - DiscoveryName: backend-flask-cfn
             PortName: backend-flask
             ClientAliases:
               - Port: !Ref ContainerPortBackend
@@ -173,13 +157,13 @@ Resources:
       DesiredCount: 1
       EnableECSManagedTags: true
       EnableExecuteCommand: true
-      HealthCheckGracePeriodSeconds: 100
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !GetAtt ServiceSG.GroupId
+            - Fn::ImportValue:
+                !Sub "${ClusterStack}ServiceSecurityGroupId"
           Subnets:
             Fn::Split:
               - ","
@@ -193,7 +177,7 @@ Resources:
         # TODO - If you want to log
         # LogConfiguration
         Services:
-          - DiscoveryName: cognito-verifier
+          - DiscoveryName: cognito-verifier-cfn
             PortName: cognito-verifier
             ClientAliases:
               - Port: !Ref ContainerPortCognitoVerifier
@@ -241,7 +225,7 @@ Resources:
             StartPeriod: 60
           PortMappings:
             - Name: !Ref ContainerNameBackend
-              ContainerPort: !Ref ContainerPort
+              ContainerPort: !Ref ContainerPortBackend
               Protocol: 'tcp'
               AppProtocol: 'http'
           LogConfiguration:
@@ -280,7 +264,7 @@ Resources:
               ValueFrom: !Ref SecretsRollbarAccessToken
             - Name: 'OTEL_EXPORTER_OTLP_HEADERS'
               ValueFrom: !Ref SecretsOtelExporterOltpHeaders
-
+        
   TaskDefinitionCognitoVerifier:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
     Type: 'AWS::ECS::TaskDefinition'
@@ -340,6 +324,7 @@ Resources:
           #     ValueFrom: !Ref SecretsRollbarAccessToken
           #   - Name: 'OTEL_EXPORTER_OTLP_HEADERS'
           #     ValueFrom: !Ref SecretsOtelExporterOltpHeaders
+
   ExecutionRole:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
     Type: AWS::IAM::Role
@@ -403,9 +388,3 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
-
-Outputs:
-  ServiceSecurityGroupId:
-    Value: !GetAtt ServiceSG.GroupId
-    Export:
-      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"
