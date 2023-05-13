@@ -388,3 +388,13 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+
+Outputs:
+  ServiceNameBackend:
+    Value: !GetAtt FargateServiceBackend.Name
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceNameBackend"
+  ServiceNameCognitoVerifier:
+    Value: !GetAtt FargateServiceCognitoVerifier.Name
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceNameCognitoVerifier"
