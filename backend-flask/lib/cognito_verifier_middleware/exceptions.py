@@ -7,12 +7,13 @@ class EndpointNotSetException(Exception):
 
 
 class EndpointConnectionFailedException(Exception):
-    def __init__(self, response_content, *args: object) -> None:
+    def __init__(self, response_content, endpoint, *args: object) -> None:
         super().__init__(*args)
         self.response_content = response_content
+        self.endpoint = endpoint
 
     def __str__(self) -> str:
-        return f"Something went wrong when contacting the Cognito Vefifier: {self.response_content}"
+        return f"Something went wrong when contacting the Cognito Vefifier {self.endpoint}: {self.response_content}"
 
 
 class TokenNotFoundException(Exception):

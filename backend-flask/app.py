@@ -294,38 +294,38 @@ def data_update_profile():
 #     return response
 
 
-@app.before_first_request
-def init_rollbar():
-    """init rollbar module"""
-    rollbar.init(
-        # access token
-        rollbar_access_token,
-        # environment name
-        "production",
-        # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
-        # flask already sets up logging
-        allow_logging_basic_config=False,
-    )
-
-    # Homework challenge
-    # Payload modifier
-    def rollbar_payload_handler(payload):
-        # Rollbar: adding the user ID to the error
-        # generating a random uuid each time.
-        user_id = "user-" + str(uuid.uuid4())
-        # Add new key/value to the payload
-        payload["data"]["user.id"] = user_id
-        payload["data"]["user.type"] = random.choice(["standard", "premium"])
-        payload["data"]["user.team"] = random.choice(
-            ["red team", "blue team", "green team", "yellow team"]
+with app.app_context():
+    def init_rollbar():
+        """init rollbar module"""
+        rollbar.init(
+            # access token
+            rollbar_access_token,
+            # environment name
+            "production",
+            # server root directory, makes tracebacks prettier
+            root=os.path.dirname(os.path.realpath(__file__)),
+            # flask already sets up logging
+            allow_logging_basic_config=False,
         )
-        return payload
 
-    rollbar.events.add_payload_handler(rollbar_payload_handler)
+        # Homework challenge
+        # Payload modifier
+        def rollbar_payload_handler(payload):
+            # Rollbar: adding the user ID to the error
+            # generating a random uuid each time.
+            user_id = "user-" + str(uuid.uuid4())
+            # Add new key/value to the payload
+            payload["data"]["user.id"] = user_id
+            payload["data"]["user.type"] = random.choice(["standard", "premium"])
+            payload["data"]["user.team"] = random.choice(
+                ["red team", "blue team", "green team", "yellow team"]
+            )
+            return payload
 
-    # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+        rollbar.events.add_payload_handler(rollbar_payload_handler)
+
+        # send exceptions from `app` to rollbar, using flask's signal system.
+        got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
 # @app.route('/rollbar/test')
