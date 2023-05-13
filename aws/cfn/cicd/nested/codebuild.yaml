@@ -25,6 +25,9 @@ Parameters:
   BuildSpec:
     Type: String
     Default: 'buildspec.yaml'
+  ProjectName:
+    Type: String
+    Default: 'CrdBuildProject'
 Resources:
   CodeBuild:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
@@ -49,6 +52,7 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: !Ref BuildSpec
+      Name: !Sub ${AWS::StackName}CrdBuildProject
   CodeBuildRole:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
     Type: AWS::IAM::Role
@@ -110,4 +114,4 @@ Resources:
 Outputs:
   CodeBuildProjectName:
     Description: "CodeBuildProjectName"
-    Value: !Sub ${AWS::StackName}Project
+    Value: !Sub ${AWS::StackName}CrdBuildProject

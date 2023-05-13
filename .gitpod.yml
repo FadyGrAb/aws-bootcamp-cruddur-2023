@@ -84,6 +84,7 @@ tasks:
       cd ../aws-bootcamp-cruddur-2023
       git-hooks init mask
       chmod 744 .git/hooks/pre-commit
+      git-hooks exec -r mask
 
 vscode:
   extensions:
