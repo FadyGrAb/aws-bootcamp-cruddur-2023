@@ -153,6 +153,7 @@ Resources:
                 - codebuild:StartBuild
                 - codebuild:StopBuild
                 - codebuild:RetryBuild
+                - codebuild:BatchGetBuilds
                 Effect: Allow
                 Resource: !Join
                   - ''
