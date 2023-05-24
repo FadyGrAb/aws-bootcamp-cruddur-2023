@@ -11,6 +11,8 @@ tasks:
       mkdir tmp
       pip install cfn-lint
       cargo install cfn-guard
+      bundle install
+      bundle update --bundler
       gem install cfn-toml
   - name: aws-cli
     env:

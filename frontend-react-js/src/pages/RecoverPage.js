@@ -117,11 +117,11 @@ export default function RecoverPage() {
   };
 
   let form;
-  if (formState == "send_code") {
+  if (formState === "send_code") {
     form = send_code();
-  } else if (formState == "confirm_code") {
+  } else if (formState === "confirm_code") {
     form = confirm_code();
-  } else if (formState == "success") {
+  } else if (formState === "success") {
     form = success();
   }
 
