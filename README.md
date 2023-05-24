@@ -1,5 +1,7 @@
 # FREE AWS Cloud Project Bootcamp
+
 ![build tag](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiWDBNSVlLdlVHTjlpNTRHOWhxS2hPZEZvMDZLUlB1WS8ySXk1enR6WEJjcmdvK1NIR2pPNWFLUlc0T0V2SVZZazAxWTJyMzcya1Z5WFhDL1hvUmRSZTQ4PSIsIml2UGFyYW1ldGVyU3BlYyI6InZMSWdPelRDR3FnUlhRVUwiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
+
 - Application: Cruddur
 - Cohort: 2023-A1
 
@@ -26,7 +28,6 @@ The `/journal` directory contains
 - [x] [Week 6 - 7](journal/week6-7.md)
 - [x] [Week 8](journal/week8.md)
 - [x] [Week 9](journal/week9.md)
-- [ ] [Week 10](journal/week10.md)
-- [ ] [Week 11](journal/week11.md)
+- [x] [Week 10 - 11](journal/week10-11.md)
 - [ ] [Week 12](journal/week12.md)
 - [ ] [Week 13](journal/week13.md)
