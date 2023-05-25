@@ -10,3 +10,4 @@ _unmasked_*
 .aws-sam
 build.toml
 tmp/*
+!tmp/sync-changeset*
