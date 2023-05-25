@@ -23,7 +23,7 @@ jobs:
           CI: false # in order not to treat warning as errors. CI = true will treat warning as erros which is the default.
         run: |
           cd frontend-react-js
-          npm install
+          npm ci
           npm run build
 
       - name: Init Ruby environment
