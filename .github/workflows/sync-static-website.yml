@@ -48,5 +48,7 @@ jobs:
           echo "===========Installing gems==========="
           bundle install
           bundle update --bundler
+          echo "=====Generating frontedn env vars===="
+          bin/frontend/generate-env
           echo "==============Syncing================"
           bin/frontend/sync
