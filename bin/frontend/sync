@@ -26,7 +26,7 @@ puts "build_dir:            #{ENV["SYNC_BUILD_DIR"]}"
 changeset_path = changeset_path.sub(".json","-#{Time.now.to_i}.json")
 
 puts "output_changset_path: #{changeset_path}"
-puts "auto_approve:         #{ENV["SYNC_AUTO_APPROVE"]}"
+puts "auto_approve:         #{auto_approve}"
 
 puts "sync =="
 AwsS3WebsiteSync::Runner.run(
