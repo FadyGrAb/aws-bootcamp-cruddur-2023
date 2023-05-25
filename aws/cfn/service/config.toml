@@ -2,3 +2,7 @@
 bucket = 'cfn-artifacts-fm'
 region = 'us-east-1'
 stack_name = 'CrdSrvBackendFlask'
+
+[parameters]
+EnvFrontendUrl = 'https://crudderme.click'
+EnvBackendUrl = 'https://api.crudderme.click'
