@@ -64,10 +64,10 @@ Parameters:
     Default: 1r2sqkiovudim8h9qid999hdpu
   EnvFrontendUrl:
     Type: String
-    Default: "https://crudderme.click"
+    Default: "*"
   EnvBackendUrl:
     Type: String
-    Default: "https://api.crudderme.click"
+    Default: "*"
   # EnvAWSDefaultRegion:
   #   Type: String
   #   Default: "us-east-1"

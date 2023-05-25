@@ -20,6 +20,13 @@ jobs:
 
       - name: Build site
         env:
+          REACT_APP_API_GATEWAY_ENDPOINT_URL: ${{ secrets.REACT_APP_API_GATEWAY_ENDPOINT_URL }}
+          REACT_APP_AWS_USER_POOLS_ID: ${{ secrets.REACT_APP_AWS_USER_POOLS_ID }}
+          REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          REACT_APP_AWS_COGNITO_REGION: ${{ vars.REACT_APP_AWS_COGNITO_REGION }}
+          REACT_APP_AWS_PROJECT_REGION: ${{ vars.REACT_APP_AWS_PROJECT_REGION }}
+          REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL }}
           CI: false # in order not to treat warning as errors. CI = true will treat warning as erros which is the default.
         run: |
           cd frontend-react-js
@@ -35,19 +42,11 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          REACT_APP_API_GATEWAY_ENDPOINT_URL: ${{ secrets.REACT_APP_API_GATEWAY_ENDPOINT_URL }}
-          REACT_APP_AWS_USER_POOLS_ID: ${{ secrets.REACT_APP_AWS_USER_POOLS_ID }}
-          REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
-          REACT_APP_AWS_COGNITO_REGION: ${{ vars.REACT_APP_AWS_COGNITO_REGION }}
-          REACT_APP_AWS_PROJECT_REGION: ${{ vars.REACT_APP_AWS_PROJECT_REGION }}
-          REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL }}
           GITHUB_ACTIONS_WORKFLOW: true
         run: |
           echo "===========Installing gems==========="
           bundle install
           bundle update --bundler
-          echo "=========Generating env vars========="
-          bin/frontend/generate-env
           echo "==============Syncing================"
           bin/frontend/sync
