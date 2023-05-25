@@ -6,7 +6,7 @@ require 'dotenv'
 if ENV["GITHUB_ACTIONS_WORKFLOW"]
   changeset_path =    "tmp/sync-changeset.json"
   build_dir =         "frontend-react-js/buid"
-  auto_approve =      true
+  auto_approve =      "true"
   env_path =          "sync.env"
 else
   changeset_path =    ENV["SYNC_OUTPUT_CHANGESET_PATH"]
