@@ -3,7 +3,18 @@
 require 'aws_s3_website_sync'
 require 'dotenv'
 
-env_path = "/workspace/aws-bootcamp-cruddur-2023/sync.env"
+if ENV["GITHUB_ACTIONS_WORKFLOW"]
+  changeset_path =    "tmp/sync-changeset.json"
+  build_dir =         "frontend-react-js/buid"
+  auto_approve =      true
+  env_path =          "sync.env"
+else
+  changeset_path =    ENV["SYNC_OUTPUT_CHANGESET_PATH"]
+  build_dir =         ENV["SYNC_BUILD_DIR"]
+  auto_approve =      ENV["SYNC_AUTO_APPROVE"]
+  env_path =          "/workspace/aws-bootcamp-cruddur-2023/sync.env"
+end
+
 Dotenv.load(env_path)
 
 puts "== configuration"
@@ -12,7 +23,6 @@ puts "s3_bucket:            #{ENV["SYNC_S3_BUCKET"]}"
 puts "distribution_id:      #{ENV["SYNC_CLOUDFRONT_DISTRUBTION_ID"]}"
 puts "build_dir:            #{ENV["SYNC_BUILD_DIR"]}"
 
-changeset_path = ENV["SYNC_OUTPUT_CHANGESET_PATH"]
 changeset_path = changeset_path.sub(".json","-#{Time.now.to_i}.json")
 
 puts "output_changset_path: #{changeset_path}"
@@ -25,9 +35,9 @@ AwsS3WebsiteSync::Runner.run(
   aws_default_region:    ENV["AWS_DEFAULT_REGION"],
   s3_bucket:             ENV["SYNC_S3_BUCKET"],
   distribution_id:       ENV["SYNC_CLOUDFRONT_DISTRUBTION_ID"],
-  build_dir:             ENV["SYNC_BUILD_DIR"],
+  build_dir:             build_dir,
   output_changset_path:  changeset_path,
-  auto_approve:          ENV["SYNC_AUTO_APPROVE"],
+  auto_approve:          auto_approve,
   silent: "ignore,no_change",
   ignore_files: [
     'stylesheets/index',
