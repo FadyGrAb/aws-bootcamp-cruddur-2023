@@ -19,6 +19,8 @@ jobs:
           node-version: 18
 
       - name: Build site
+        env:
+          CI: false
         run: |
           cd frontend-react-js
           npm install
@@ -27,8 +29,8 @@ jobs:
       - name: Init Ruby environment
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '3.1'
-          
+          ruby-version: "3.1"
+
       - name: Sync static site
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
