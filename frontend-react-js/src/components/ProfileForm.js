@@ -48,9 +48,9 @@ export default function ProfileForm(props) {
     const file = event.target.files[0];
     // console.log("file", file);
     const filename = file.name;
-    const size = file.size;
+    // const size = file.size;
     const type = file.type;
-    const preview_image_url = URL.createObjectURL(file);
+    // const preview_image_url = URL.createObjectURL(file);
     // console.log(filename, size, type);
     // console.log("pp", presignedurl);
     const fileparts = filename.split('.')
@@ -93,7 +93,7 @@ export default function ProfileForm(props) {
           display_name: displayName,
         }),
       });
-      let data = await res.json();
+      // let data = await res.json();
       if (res.status === 200) {
         setBio(null);
         setDisplayName(null);

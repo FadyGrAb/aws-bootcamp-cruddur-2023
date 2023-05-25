@@ -8,7 +8,8 @@ import pathlib
 
 class Db:
   def __init__(self):
-    self.pool = ConnectionPool(os.getenv("CONNECTION_URL"))
+    connection_url = os.getenv("PROD_CONNECTION_URL") if os.getenv("DB_ENV") == "prod" else os.getenv("CONNECTION_URL")
+    self.pool = ConnectionPool(connection_url)
 
   def get_template(self,*args):
     app_root_directory = pathlib.Path(app.root_path)

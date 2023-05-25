@@ -1,0 +1,42 @@
+name: "Sync static website"
+run-name: "Deploy Site Run: ${{ github.run_id }}"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build-site:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Build site
+        run: |
+          cd frontend-react-js
+          npm install
+          npm run build
+
+      - name: Init Ruby environment
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          
+      - name: Sync static site
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          GITHUB_ACTIONS_WORKFLOW: true
+        run: |
+          bundle install
+          bundle update --bundler
+          bin/frontend/generate-env
+          bin/frontend/sync

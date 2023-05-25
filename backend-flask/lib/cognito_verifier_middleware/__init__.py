@@ -51,6 +51,6 @@ class CognitoVerifierMiddleware:
         test_connection = requests.get(self._endpoint)
 
         if test_connection.status_code != 200:
-            raise EndpointConnectionFailedException(test_connection)
+            raise EndpointConnectionFailedException(test_connection, self._endpoint)
         else:
             self.app.logger.info("Cognito Verifier middleware connection test passed.")

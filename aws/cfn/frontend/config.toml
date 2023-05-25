@@ -1,0 +1,9 @@
+[deploy]
+bucket = 'cfn-artifacts-fm'
+region = 'us-east-1'
+stack_name = 'CrdFrontend'
+
+[parameters]
+CertificateArn = 'arn:aws:acm:us-east-1:********1769:certificate/a0e1b2a5-c96c-403c-ba39-7b9f4a7d819d'
+WwwBucketName = 'www.crudderme.click'
+RootBucketName = 'crudderme.click'

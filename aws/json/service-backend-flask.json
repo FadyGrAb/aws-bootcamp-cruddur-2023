@@ -1,5 +1,5 @@
 {
-  "cluster": "cruddur",
+  "cluster": "CrdClusterFargateCluster",
   "launchType": "FARGATE",
   "desiredCount": 1,
   "enableECSManagedTags": true,
@@ -10,6 +10,7 @@
       "assignPublicIp": "ENABLED",
       "securityGroups": ["sg-06b7c3ed9d4b65d36"],
       "subnets": [
+        // to be edited after cfn creation
         "subnet-0ed5e1f9f9a33052a",
         "subnet-0b5fa524f84ac5187",
         "subnet-03ac815cb1328c60e"
@@ -23,6 +24,7 @@
 
   "loadBalancers": [
     {
+      // to be edited after cfn creation
       "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:********1769:targetgroup/cruddur-backend-flask-tg/668eaa0f6787422d",
       "containerName": "backend-flask",
       "containerPort": 4567

@@ -1,4 +1,19 @@
 tasks:
+  - name: aws-sam
+    init: |
+      cd /workspace
+      wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
+      unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+      sudo ./sam-installation/install
+      cd $THEIA_WORKSPACE_ROOT
+  - name: cfn
+    before: |
+      mkdir tmp
+      pip install cfn-lint
+      cargo install cfn-guard
+      bundle install
+      bundle update --bundler
+      gem install cfn-toml
   - name: aws-cli
     env:
       AWS_CLI_AUTO_PROMPT: on-partial
@@ -61,6 +76,17 @@ tasks:
       npm install
       cd ..
       bash "bin/avatar/build"
+
+  - name: git-hooks
+    before: |
+      cd /workspace
+      git clone https://github.com/FadyGrAb/git-hooks.git
+      cd git-hooks
+      pip install .
+      cd ../aws-bootcamp-cruddur-2023
+      git-hooks init mask
+      chmod 744 .git/hooks/pre-commit
+      git-hooks exec -r mask
 
 vscode:
   extensions:

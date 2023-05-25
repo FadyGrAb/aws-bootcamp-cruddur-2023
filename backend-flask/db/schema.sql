@@ -2,6 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DROP TABLE IF EXISTS public.users;
 DROP TABLE IF EXISTS public.activities;
+DROP TABLE IF EXISTS public.schema_information;
 
 CREATE TABLE IF NOT EXISTS public.schema_information (
   id integer UNIQUE,
