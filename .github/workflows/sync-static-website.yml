@@ -38,10 +38,10 @@ jobs:
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
           GITHUB_ACTIONS_WORKFLOW: true
         run: |
-          echo "==========Installing gems=========="
+          echo "============Installing gems============"
           bundle install
           bundle update --bundler
           echo "==========Generating env vars=========="
           bin/frontend/generate-env
-          echo "==========Syncing=========="
+          echo "===============Syncing================="
           bin/frontend/sync
