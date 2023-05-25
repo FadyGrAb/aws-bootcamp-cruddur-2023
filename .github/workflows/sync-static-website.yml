@@ -7,7 +7,7 @@ on:
       - prod
 
 jobs:
-  build-site:
+  build-and-sync-site:
     runs-on: "ubuntu-latest"
     steps:
       - name: Checkout
@@ -20,7 +20,7 @@ jobs:
 
       - name: Build site
         env:
-          CI: false
+          CI: false # in order not to treat warning as errors. CI = true will treat warning as erros which is the default.
         run: |
           cd frontend-react-js
           npm install
