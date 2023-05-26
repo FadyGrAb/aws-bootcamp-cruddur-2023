@@ -2,3 +2,4 @@
 /workspace/aws-bootcamp-cruddur-2023/aws/cfn/db/config.toml
 /workspace/aws-bootcamp-cruddur-2023/aws/cfn/service/template.yaml
 /workspace/aws-bootcamp-cruddur-2023/aws/cfn/frontend/config.toml
+/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cicd/nested/codebuild.yaml

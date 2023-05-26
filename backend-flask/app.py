@@ -232,14 +232,21 @@ def data_search():
 @cross_origin()
 def data_activities():
     # user_handle = 'andrewbrown'
-    user_handle = request.json["user_handle"]
+    # user_handle = request.json["user_handle"]
     message = request.json["message"]
     ttl = request.json["ttl"]
-    model = CreateActivity.run(message, user_handle, ttl)
-    if model["errors"] is not None:
-        return model["errors"], 422
-    else:
-        return model["data"], 200
+    try:
+        if cognito_verifier.token_is_valid:
+            model = CreateActivity.run(message, cognito_verifier.cognito_user_id, ttl)
+            if model["errors"] is not None:
+                return model["errors"], 422
+            else:
+                return model["data"], 200
+        else:
+            return {}, 401
+    except TokenNotFoundException as e:
+        print(e)
+        return {}, 401
 
 
 @app.route("/api/activities/<string:activity_uuid>", methods=["GET"])
