@@ -29,9 +29,10 @@ class UserActivities:
 
             telemetry_agent.xray_end_subsegment()
 
-            for i in range (10):
-                telemetry_agent.xray_begin_subsegment(f"user_activities_telemetry_module_added_latency_{i}")
-                sleep(random.random())
-                telemetry_agent.xray_end_subsegment()
+            # trace simulation
+            # for i in range (10):
+            #     telemetry_agent.xray_begin_subsegment(f"user_activities_telemetry_module_added_latency_{i}")
+            #     sleep(random.random())
+            #     telemetry_agent.xray_end_subsegment()
 
         return model
