@@ -5,6 +5,7 @@ import requests
 from .exceptions import *
 from flask import Flask, request
 
+
 class CognitoVerifierMiddleware:
     def __init__(self, app: Flask) -> None:
         self.app = app
@@ -24,9 +25,10 @@ class CognitoVerifierMiddleware:
             token = self._extract_token()
         except TokenNotFoundException:
             return False
-        
+
         cognito_verifier_response = requests.get(
-            f"{self._endpoint}/verify?token={token}")
+            f"{self._endpoint}/verify?token={token}"
+        )
 
         if cognito_verifier_response.status_code == 200:
             self._token_payload = json.loads(cognito_verifier_response.content)
@@ -54,3 +56,15 @@ class CognitoVerifierMiddleware:
             raise EndpointConnectionFailedException(test_connection, self._endpoint)
         else:
             self.app.logger.info("Cognito Verifier middleware connection test passed.")
+
+    def jwt_required(self, func, run_without_jwt=None):
+        try:
+            if self.token_is_valid:
+                func()
+            elif run_without_jwt:
+                run_without_jwt()
+            else:
+                return {}, 403
+        except TokenNotFoundException as e:
+            print(e)
+            return {}, 401
