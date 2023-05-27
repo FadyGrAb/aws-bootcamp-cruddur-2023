@@ -5,11 +5,11 @@ from flask import request
 from flask_cors import cross_origin
 
 ## services
-from services.home_activities import *
-from services.notifications_activities import *
-from services.create_activity import *
-from services.search_activities import *
-from services.create_reply import *
+from services.home_activities import HomeActivities
+from services.notifications_activities import NotifictionsActivities
+from services.create_activity import CreateActivity
+from services.search_activities import SearchActivities
+from services.create_reply import CreateReply
 
 from lib.helpers import *
 
