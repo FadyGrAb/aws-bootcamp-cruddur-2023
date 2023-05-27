@@ -15,11 +15,11 @@ class MessageGroups:
       'cognito_user_id': cognito_user_id
     })
 
-    print(f"UUID: {my_user_uuid}")
+    print(f"==============>UUID: {my_user_uuid}")
 
     ddb = Ddb.client()
     data = Ddb.list_message_groups(ddb, my_user_uuid)
-    print("list_message_groups:",data)
+    print("================>list_message_groups:",data)
 
     model['data'] = data
     return model
