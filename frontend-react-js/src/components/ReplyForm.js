@@ -4,6 +4,9 @@ import process from 'process';
 
 import ActivityContent  from '../components/ActivityContent';
 
+import { getAccessToken } from "../lib/CheckAuth";
+
+
 export default function ReplyForm(props) {
   const [count, setCount] = React.useState(0);
   const [message, setMessage] = React.useState('');
@@ -18,13 +21,17 @@ export default function ReplyForm(props) {
     event.preventDefault();
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${props.activity.uuid}/reply`
+      await getAccessToken();
+      const access_token = localStorage.getItem("access_token");
       const res = await fetch(backend_url, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${access_token}`,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          activity_uuid: props.replyActivity.uuid,
           message: message
         }),
       });
