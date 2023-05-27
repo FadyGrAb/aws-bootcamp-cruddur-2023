@@ -1,11 +1,4 @@
-import os
-import uuid
-import random
-
-from flask import abort, make_response, jsonify
 from flask import Flask
-from flask import request
-from flask_cors import CORS, cross_origin
 
 import routes.activities
 import routes.general
