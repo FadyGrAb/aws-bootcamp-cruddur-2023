@@ -31,14 +31,14 @@ export default function ReplyForm(props) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          activity_uuid: props.replyActivity.uuid,
+          activity_uuid: props.activity.uuid,
           message: message
         }),
       });
       let data = await res.json();
       if (res.status === 200) {
         // add activity to the feed
-
+        console.log("ACTIVITIES", props.activities)
         let activities_deep_copy = JSON.parse(JSON.stringify(props.activities))
         let found_activity = activities_deep_copy.find(function (element) {
           return element.uuid ===  props.activity.uuid;

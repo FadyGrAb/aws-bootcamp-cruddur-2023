@@ -1,5 +1,5 @@
 #! /usr/bin/bash
--e
+set -e
 
 CYAN='\033[1;36m'
 NO_COLOR='\033[0m'
@@ -33,9 +33,9 @@ if [ "$1" = "prod" ]
 then
     export DB_ENV="prod"
 fi
-python3 "$BIN_PATH/update_cognito_user_ids"
 python3 "$BIN_PATH/migrate"
-unset DB_
+python3 "$BIN_PATH/update_cognito_user_ids"
+unset DB_ENV
 # Seed tables
 if [ "$1" = "prod" ]
 then

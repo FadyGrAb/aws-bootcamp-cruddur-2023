@@ -40,16 +40,18 @@ migrations_path = os.path.abspath(os.path.join(
 sys.path.append(migrations_path)
 migration_files = glob.glob(f"{migrations_path}/*")
 
-
+migrations_count = 0
 for migration_file in migration_files:
     filename = os.path.basename(migration_file)
     module_name = os.path.splitext(filename)[0]
     match = re.match(r'^\d+', filename)
     if match:
         file_time = int(match.group())
-        if last_successful_run <= file_time:
+        if int(last_successful_run) < file_time:
             mod = importlib.import_module(module_name)
             print('=== running migration: ', module_name)
             mod.migration.migrate()
-            timestamp = str(time.time()).split(".")[0]
-            last_successful_run = set_last_successful_run(timestamp)
+            migrations_count += 1
+if migrations_count > 0:
+    timestamp = str(time.time()).split(".")[0]
+    set_last_successful_run(timestamp)
