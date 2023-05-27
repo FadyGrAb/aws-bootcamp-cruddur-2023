@@ -4,6 +4,7 @@ import json
 import requests
 from .exceptions import *
 from flask import Flask, request
+from functools import wraps, partial
 
 
 class CognitoVerifierMiddleware:
@@ -57,14 +58,21 @@ class CognitoVerifierMiddleware:
         else:
             self.app.logger.info("Cognito Verifier middleware connection test passed.")
 
-    def jwt_required(self, func, run_without_jwt=None):
-        try:
-            if self.token_is_valid:
-                func()
-            elif run_without_jwt:
-                run_without_jwt()
-            else:
-                return {}, 403
-        except TokenNotFoundException as e:
-            print(e)
-            return {}, 401
+    def jwt_required(self, func=None, on_error=None):
+        if func is None:
+            return partial(self.jwt_required, on_error=on_error)
+
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            try:
+                if self.token_is_valid:
+                    return func(*args, **kwargs)
+                elif on_error:
+                    return on_error(*args, **kwargs)
+                else:
+                    return {}, 403
+            except TokenNotFoundException as e:
+                print(e)
+                return {}, 401
+
+        return decorated_function

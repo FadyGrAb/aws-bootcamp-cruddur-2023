@@ -31,21 +31,15 @@ def load(app, cognito_verifier, telemetry_agent):
 
     @app.route("/api/profile/update", methods=["POST", "OPTIONS"])
     @cross_origin()
+    @cognito_verifier.jwt_required
     def data_update_profile():
         bio = request.json.get("bio", None)
         display_name = request.json.get("display_name", None)
-        try:
-            if cognito_verifier.token_is_valid:
-                model = UpdateProfile.run(
-                    cognito_user_id=cognito_verifier.cognito_user_id,
-                    bio=bio,
-                    display_name=display_name,
-                )
-                return model_json(model)
+        model = UpdateProfile.run(
+            cognito_user_id=cognito_verifier.cognito_user_id,
+            bio=bio,
+            display_name=display_name,
+        )
+        return model_json(model)
 
-            else:
-                # unauthenicatied request
-                return {}, 401
-        except TokenNotFoundException as e:
-            print(e)
-            return {}, 401
+    

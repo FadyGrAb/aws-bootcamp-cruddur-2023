@@ -30,11 +30,10 @@ def load(app, cognito_verifier=None, telemetry_agent=None):
     #     return data, 200
 
     @app.route("/api/activities/home", methods=["GET"])
-    @cognito_verifier.jwt_required(run_without_jwt=default_home)
+    @cognito_verifier.jwt_required(on_error=default_home)
     def data_home():
-        cognito_user_id = cognito_verifier.cognito_user_id
         data = HomeActivities.run(
-            cognito_user_id=cognito_user_id, telemetry_agent=telemetry_agent
+            cognito_user_id=cognito_verifier.cognito_user_id, telemetry_agent=telemetry_agent
         )
         return data, 200
 
@@ -51,37 +50,19 @@ def load(app, cognito_verifier=None, telemetry_agent=None):
 
     @app.route("/api/activities", methods=["POST", "OPTIONS"])
     @cross_origin()
+    @cognito_verifier.jwt_required
     def data_activities():
         message = request.json["message"]
         ttl = request.json["ttl"]
-        try:
-            if cognito_verifier.token_is_valid:
-                model = CreateActivity.run(
-                    message, cognito_verifier.cognito_user_id, ttl
-                )
-                return model_json(model)
-            else:
-                return {}, 401
-        except TokenNotFoundException as e:
-            print(e)
-            return {}, 401
-
+        model = CreateActivity.run(message, cognito_verifier.cognito_user_id, ttl)
+        return model_json(model)
+        
     @app.route(
         "/api/activities/<string:activity_uuid>/reply", methods=["POST", "OPTIONS"]
     )
     @cross_origin()
+    @cognito_verifier.jwt_required
     def data_activities_reply(activity_uuid):
-        try:
-            if cognito_verifier.token_is_valid:
-                model = CreateActivity.run(
-                    message, cognito_verifier.cognito_user_id, ttl
-                )
-                return model_json(model)
-            else:
-                return {}, 401
-        except TokenNotFoundException as e:
-            print(e)
-            return {}, 401
         user_handle = "andrewbrown"
         message = request.json["message"]
         model = CreateReply.run(message, user_handle, activity_uuid)
