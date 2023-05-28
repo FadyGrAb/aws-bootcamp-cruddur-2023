@@ -34,8 +34,6 @@ then
     export DB_ENV="prod"
 fi
 python3 "$BIN_PATH/migrate"
-python3 "$BIN_PATH/update_cognito_user_ids"
-unset DB_ENV
 # Seed tables
 if [ "$1" = "prod" ]
 then
@@ -47,3 +45,5 @@ then
 fi
 echo " "
 bash "$BIN_PATH/seed" $1
+python3 "$BIN_PATH/update_cognito_user_ids"
+unset DB_ENV
