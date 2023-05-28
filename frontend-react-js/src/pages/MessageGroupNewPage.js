@@ -1,12 +1,14 @@
-import "./MessageGroupPage.css";
+import './MessageGroupPage.css';
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
-import DesktopNavigation from "../components/DesktopNavigation";
-import MessageGroupFeed from "../components/MessageGroupFeed";
-import MessagesFeed from "../components/MessageFeed";
-import MessagesForm from "../components/MessageForm";
-import { checkAuth, getAccessToken } from "../lib/CheckAuth";
+import DesktopNavigation  from 'components/DesktopNavigation';
+import MessageGroupFeed from 'components/MessageGroupFeed';
+import MessagesFeed from 'components/MessageFeed';
+import MessagesForm from 'components/MessageForm';
+
+import {get} from 'lib/Requests';
+import {checkAuth} from 'lib/CheckAuth';
 
 export default function MessageGroupPage() {
   const [otherUser, setOtherUser] = React.useState([]);
@@ -18,46 +20,21 @@ export default function MessageGroupPage() {
   const params = useParams();
 
   const loadUserShortData = async () => {
-    try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/users/@${params.handle}/short`;
-      const res = await fetch(backend_url, {
-        method: "GET",
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        console.log("other user:", resJson);
-        setOtherUser(resJson);
-      } else {
-        console.log(res);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/users/@${params.handle}/short`
+    get(url,null,function(data){
+      console.log('other user:',data)
+      setOtherUser(data)
+    })
+  }
 
   const loadMessageGroupsData = async () => {
-    try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`;
-      await getAccessToken();
-      const access_token = localStorage.getItem("access_token");
-      const res = await fetch(backend_url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        method: "GET",
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        setMessageGroups(resJson);
-      } else {
-        console.log(res);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`
+    get(url,null,function(data){
+      setMessageGroups(data)
+    })
+  };  
 
-  React.useEffect(() => {
+  React.useEffect(()=>{
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -65,17 +42,14 @@ export default function MessageGroupPage() {
     loadMessageGroupsData();
     loadUserShortData();
     checkAuth(setUser);
-  }, []);
+  }, [])
   return (
     <article>
-      <DesktopNavigation user={user} active={"home"} setPopped={setPopped} />
-      <section className="message_groups">
-        <MessageGroupFeed
-          otherUser={otherUser}
-          message_groups={messageGroups}
-        />
+      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+      <section className='message_groups'>
+        <MessageGroupFeed otherUser={otherUser} message_groups={messageGroups} />
       </section>
-      <div className="content messages">
+      <div className='content messages'>
         <MessagesFeed messages={messages} />
         <MessagesForm setMessages={setMessages} />
       </div>

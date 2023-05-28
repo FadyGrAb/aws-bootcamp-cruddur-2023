@@ -1,12 +1,14 @@
-import "./HomeFeedPage.css";
+import './HomeFeedPage.css';
 import React from "react";
 
-import DesktopNavigation from "../components/DesktopNavigation";
-import DesktopSidebar from "../components/DesktopSidebar";
-import ActivityFeed from "../components/ActivityFeed";
-import ActivityForm from "../components/ActivityForm";
-import ReplyForm from "../components/ReplyForm";
-import { checkAuth, getAccessToken } from "../lib/CheckAuth";
+import DesktopNavigation  from 'components/DesktopNavigation';
+import DesktopSidebar     from 'components/DesktopSidebar';
+import ActivityFeed from 'components/ActivityFeed';
+import ActivityForm from 'components/ActivityForm';
+import ReplyForm from 'components/ReplyForm';
+
+import {get} from 'lib/Requests';
+import {checkAuth} from 'lib/CheckAuth';
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -17,61 +19,45 @@ export default function HomeFeedPage() {
   const dataFetchedRef = React.useRef(false);
 
   const loadData = async () => {
-    try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
-      await getAccessToken();
-      const access_token = localStorage.getItem("access_token");
-      const res = await fetch(backend_url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        method: "GET",
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        setActivities(resJson);
-      } else {
-        console.log(res);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  React.useEffect(() => {
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
+    get(url,null,function(data){
+      setActivities(data)
+    })
+  }
+  
+  React.useEffect(()=>{
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
 
     loadData();
     checkAuth(setUser);
-  }, []);
+  }, [])
 
   return (
     <article>
-      <DesktopNavigation user={user} active={"home"} setPopped={setPopped} />
-      <div className="content">
-        <ActivityForm
+      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+      <div className='content'>
+        <ActivityForm  
           popped={popped}
-          setPopped={setPopped}
-          setActivities={setActivities}
+          setPopped={setPopped} 
+          setActivities={setActivities} 
         />
-        <ReplyForm
-          activity={replyActivity}
-          popped={poppedReply}
-          setPopped={setPoppedReply}
-          setActivities={setActivities}
-          activities={activities}
+        <ReplyForm 
+          activity={replyActivity} 
+          popped={poppedReply} 
+          setPopped={setPoppedReply} 
+          setActivities={setActivities} 
+          activities={activities} 
         />
-        <div className="activity_feed">
-          <div className="activity_feed_heading">
-            <div className="title">Home</div>
+        <div className='activity_feed'>
+          <div className='activity_feed_heading'>
+            <div className='title'>Home</div>
           </div>
-          <ActivityFeed
-            // title="Home"
-            setReplyActivity={setReplyActivity}
-            setPopped={setPoppedReply}
-            activities={activities}
+          <ActivityFeed 
+            setReplyActivity={setReplyActivity} 
+            setPopped={setPoppedReply} 
+            activities={activities} 
           />
         </div>
       </div>
