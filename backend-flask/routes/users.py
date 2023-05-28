@@ -15,7 +15,7 @@ from lib.helpers import model_json
 
 def load(app, cognito_verifier, telemetry_agent):
     @app.route("/api/activities/@<string:handle>", methods=["GET"])
-    def data_handle(handle):
+    def data_users_activities(handle):
         model = UserActivities.run(handle, telemetry_agent)
         return model_json(model)
 
