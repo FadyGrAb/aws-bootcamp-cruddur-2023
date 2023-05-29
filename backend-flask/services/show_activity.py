@@ -6,7 +6,7 @@ class ShowActivity:
   def run(activity_uuid):
    
     sql = db.get_template('activities','show')
-    results = db.query_array_json(sql,{
+    results = db.query_object_json(sql,{
       'uuid': activity_uuid
     })
     return results
