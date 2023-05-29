@@ -67,6 +67,7 @@ export default function NotificationsFeedPage() {
             setReplyActivity={setReplyActivity}
             setPopped={setPoppedReply}
             activities={activities}
+            showType={"notifications"}
           />
         </div>
       </div>

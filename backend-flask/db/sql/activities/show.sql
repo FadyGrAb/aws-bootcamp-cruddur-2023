@@ -9,6 +9,7 @@ SELECT
       activities.reposts_count,
       activities.likes_count,
       activities.expires_at,
+      activities.reply_to_activity_uuid,
       activities.created_at
   ) object_row) as activity,
   (SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
