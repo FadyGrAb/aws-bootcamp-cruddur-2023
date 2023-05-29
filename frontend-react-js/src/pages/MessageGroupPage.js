@@ -20,15 +20,21 @@ export default function MessageGroupPage() {
 
   const loadMessageGroupsData = async () => {
     const url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`
-    get(url,null,function(data){
-      setMessageGroups(data)
+    get(url,{
+      auth: true,
+      success: function(data){
+        setMessageGroups(data)
+      }
     })
   }
 
   const loadMessageGroupData = async () => {
     const url = `${process.env.REACT_APP_BACKEND_URL}/api/messages/${params.message_group_uuid}`
-    get(url,null,function(data){
-      setMessages(data)
+    get(url,{
+      auth: true,
+      success: function(data){
+        setMessages(data)
+      }
     })
   }
 
@@ -43,7 +49,7 @@ export default function MessageGroupPage() {
   }, [])
   return (
     <article>
-      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+      <DesktopNavigation user={user} active={'messages'} setPopped={setPopped} />
       <section className='message_groups'>
         <MessageGroupFeed message_groups={messageGroups} />
       </section>
