@@ -13,7 +13,6 @@ export default function MessageGroupItem(props) {
     }
     return classes.join(' ');
   }
-
   return (
     <Link className={classes()} to={`/messages/`+props.message_group.uuid}>
       <div className='message_group_avatar'></div>

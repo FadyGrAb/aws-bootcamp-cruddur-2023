@@ -14,10 +14,14 @@ export default function ActivityContent(props) {
                   </div>
 
   }
-
+  const avatarStyles = {
+    backgroundImage: `url("https://assets.crudderme.click/avatars/${props.activity.cognito_user_id}.jpg")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
   return (
     <div className='activity_content_wrap'>
-      <Link className='activity_avatar'to={`/@`+props.activity.handle} ></Link>
+      <Link className='activity_avatar'to={`/@`+props.activity.handle} style={avatarStyles}></Link>
       <div className='activity_content'>
         <div className='activity_meta'>
           <div className='activity_identity' >

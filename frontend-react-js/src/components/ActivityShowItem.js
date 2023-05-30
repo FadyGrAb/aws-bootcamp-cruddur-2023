@@ -15,12 +15,17 @@ export default function ActivityShowItem(props) {
   attrs.className = 'activity_item expanded'
 
   const userIsAthenticated = localStorage.getItem("access_token") !== null;
+  const avatarStyles = {
+    backgroundImage: `url("https://assets.crudderme.click/avatars/${props.activity.cognito_user_id}.jpg")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
   return (
     <div {...attrs}>
       <div className="acitivty_main">
         <div className='activity_content_wrap'>
           <div className='activity_content'>
-            <Link className='activity_avatar'to={`/@`+props.activity.handle} ></Link>
+            <Link className='activity_avatar'to={`/@`+props.activity.handle} style={avatarStyles}></Link>
             <div className='activity_meta'>
               <div className='activity_identity' >
                 <Link className='display_name' to={`/@`+props.activity.handle}>{props.activity.display_name}</Link>
