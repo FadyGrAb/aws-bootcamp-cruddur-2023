@@ -47,12 +47,15 @@ def get_cognito_user_ids():
     dict_users[handle['Value']] = sub['Value']
   return dict_users
 
+try:
+  users = get_cognito_user_ids()
 
-users = get_cognito_user_ids()
-
-for handle, sub in users.items():
-  print('----',handle,sub)
-  update_users_with_cognito_user_id(
-    handle=handle,
-    sub=sub
-  )
+  for handle, sub in users.items():
+    print('----',handle,sub)
+    update_users_with_cognito_user_id(
+      handle=handle,
+      sub=sub
+    )
+except Exception as e:
+  print(e)
+  sys.exit(1)

@@ -13,15 +13,18 @@ from services.create_reply import CreateReply
 
 from lib.helpers import *
 
-def load(app, cognito_verifier=None, telemetry_agent=None):
+
+def load(app, cognito_verifier, telemetry_agent=None):
+    def default_home():
+        data = HomeActivities.run(telemetry_agent=telemetry_agent)
+        return data, 200
+
     @app.route("/api/activities/home", methods=["GET"])
+    @cognito_verifier.jwt_required(on_error=default_home)
     def data_home():
-        # My cognito middleware implementation
-        if cognito_verifier.token_is_valid:
-            cognito_user_id = cognito_verifier.cognito_user_id
-            data = HomeActivities.run(cognito_user_id=cognito_user_id, telemetry_agent=telemetry_agent)
-        else:
-            data = HomeActivities.run(telemetry_agent=telemetry_agent)
+        data = HomeActivities.run(
+            cognito_user_id=cognito_verifier.cognito_user_id, telemetry_agent=telemetry_agent
+        )
         return data, 200
 
     @app.route("/api/activities/notifications", methods=["GET"])
@@ -37,24 +40,19 @@ def load(app, cognito_verifier=None, telemetry_agent=None):
 
     @app.route("/api/activities", methods=["POST", "OPTIONS"])
     @cross_origin()
+    @cognito_verifier.jwt_required
     def data_activities():
         message = request.json["message"]
         ttl = request.json["ttl"]
-        try:
-            if cognito_verifier.token_is_valid:
-                model = CreateActivity.run(message, cognito_verifier.cognito_user_id, ttl)
-                return model_json(model)
-            else:
-                return {}, 401
-        except TokenNotFoundException as e:
-            print(e)
-            return {}, 401
-
-    @app.route("/api/activities/<string:activity_uuid>/reply", methods=["POST", "OPTIONS"])
-    @cross_origin()
-    def data_activities_reply(activity_uuid):
-        user_handle = "andrewbrown"
-        message = request.json["message"]
-        model = CreateReply.run(message, user_handle, activity_uuid)
+        model = CreateActivity.run(message, cognito_verifier.cognito_user_id, ttl)
         return model_json(model)
-
+        
+    @app.route(
+        "/api/activities/<string:activity_uuid>/reply", methods=["POST", "OPTIONS"]
+    )
+    @cross_origin()
+    @cognito_verifier.jwt_required
+    def data_activities_reply(activity_uuid):
+        message = request.json["message"]
+        model = CreateReply.run(message, cognito_verifier.cognito_user_id, activity_uuid)
+        return model_json(model)

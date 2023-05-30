@@ -24,9 +24,8 @@ if len(sys.argv) == 2:
     attrs = {}
 ddb = boto3.client("dynamodb",**attrs)
 
-# def get_user_uuids():
-def get_users():
-  # We are returning the whole user object not only the uuid so I've renamed the function.
+def get_user_uuids():
+# def get_users():
   sql = """
     SELECT 
       users.uuid,
@@ -55,18 +54,18 @@ def get_users():
     'my_user': my_user,
     'other_user': other_user
   }
-  print('get_userss')
+  print('get_user_uuids')
   print(results)
   return results
 
 def create_message_group(client,
   message_group_uuid, 
   my_user_uuid, 
-  last_message_at, 
-  message, 
-  other_user_uuid, 
-  other_user_display_name, 
-  other_user_handle):
+  last_message_at=None, 
+  message=None, 
+  other_user_uuid=None, 
+  other_user_display_name=None, 
+  other_user_handle=None):
 
   table_name = 'cruddur-messages'
   record = {
@@ -92,7 +91,7 @@ def create_message(client,
   my_user_uuid, 
   my_user_display_name, 
   my_user_handle):
-
+  
   table_name = 'cruddur-messages'
   record = {
     'pk':   {'S': f"MSG#{message_group_uuid}"},
@@ -113,8 +112,8 @@ def create_message(client,
 
 # Initialize
 message_group_uuid = "5ae290ed-55d1-47a0-bc6d-fe2bc2700399" 
-now = datetime.now(timezone.utc).astimezone()
-users = get_users()
+now = datetime.now()
+users = get_user_uuids()
 
 # Creating message groups first.
 # "My" message group.
@@ -249,7 +248,7 @@ Person 1: And Zathras was just one example of that. He was a small but important
 Person 2: Definitely. I think his character is a great example of the show's ability to balance humor and heart, and to create memorable and beloved characters that fans will cherish for years to come.
 """
 
-lines = conversation.split("\n")[1:-1]
+lines = conversation.strip().split("\n")
 
 for minute, line in enumerate(lines):
     if line.startswith("Person 1: "):
@@ -262,7 +261,7 @@ for minute, line in enumerate(lines):
         print(line)
         raise "Invalid Line" 
 
-    created_at = (now + timedelta(hours=-3) + timedelta(minutes=minute)).isoformat()
+    created_at = (now - timedelta(hours=3) + timedelta(minutes=minute)).isoformat()
     
     create_message(
         client=ddb,
