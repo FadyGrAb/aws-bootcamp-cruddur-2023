@@ -39,7 +39,6 @@ export default function SigninPage() {
     setPassword(event.target.value);
   }
 
-
   return (
     <article className="signin-article">
       <div className='signin-info'>
