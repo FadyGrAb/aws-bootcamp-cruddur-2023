@@ -29,7 +29,7 @@ def load(app, cognito_verifier, telemetry_agent):
         data = UsersShort.run(handle)
         return data, 200
 
-    @app.route("/api/profile/update", methods=["POST", "OPTIONS"])
+    @app.route("/api/profile/update", methods=["POST", "OPTIONS", "PUT"])
     @cross_origin()
     @cognito_verifier.jwt_required
     def data_update_profile():
