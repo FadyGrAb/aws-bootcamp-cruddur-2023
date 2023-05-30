@@ -21,15 +21,17 @@ export default function ActivityItem(props) {
   attrs.className = 'activity_item clickable'
   attrs.onClick = click
 
+  const userIsAthenticated = localStorage.getItem("access_token") !== null;
+
   return (
     <div {...attrs}>
       <div className="acitivty_main">
         <ActivityContent activity={props.activity} />
-        <div className="activity_actions">
-          <ActivityActionReply setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count={props.activity.replies_count}/>
-          <ActivityActionRepost activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
-          <ActivityActionLike activity_uuid={props.activity.uuid} count={props.activity.likes_count}/>
-          <ActivityActionShare activity_uuid={props.activity.uuid} />
+        <div className="activity_actions" disabled={!userIsAthenticated}>
+          <ActivityActionReply hidden={!userIsAthenticated} setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count={props.activity.replies_count}/>
+          <ActivityActionRepost hidden={!userIsAthenticated} activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
+          <ActivityActionLike hidden={!userIsAthenticated} activity_uuid={props.activity.uuid} count={props.activity.likes_count}/>
+          <ActivityActionShare hidden={!userIsAthenticated} activity_uuid={props.activity.uuid} />
         </div>
       </div>
     </div>

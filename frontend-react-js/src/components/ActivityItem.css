@@ -80,3 +80,9 @@
 .expandedMeta .created_at {
   color: rgba(255,255,255,0.4)
 }
+
+div[disabled]
+{
+  pointer-events: none;
+  opacity: 0.0;
+}

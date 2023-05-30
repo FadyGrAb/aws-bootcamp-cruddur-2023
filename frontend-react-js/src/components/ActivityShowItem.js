@@ -13,6 +13,8 @@ export default function ActivityShowItem(props) {
 
   const attrs = {}
   attrs.className = 'activity_item expanded'
+
+  const userIsAthenticated = localStorage.getItem("access_token") !== null;
   return (
     <div {...attrs}>
       <div className="acitivty_main">
@@ -43,7 +45,7 @@ export default function ActivityShowItem(props) {
             {format_datetime(props.activity.created_at)}
           </div>
         </div>
-        <div className="activity_actions">
+        <div className="activity_actions" disabled={!userIsAthenticated}>
           <ActivityActionReply setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count={props.activity.replies_count}/>
           <ActivityActionRepost activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
           <ActivityActionLike activity_uuid={props.activity.uuid} count={props.activity.likes_count}/>
