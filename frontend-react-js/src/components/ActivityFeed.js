@@ -13,8 +13,8 @@ export default function ActivityFeed(props) {
       items = props.activities.map(activity => {
         return <ActivityItem setReplyActivity={props.setReplyActivity} setPopped={props.setPopped} key={activity.uuid} activity={activity} />
         })
-    } else {
-      items = props.activities.filter((activity) => (activity.reply_to_activity_uuid === null)).map(activity => {
+    } else if (props.showType === "home") {
+      items = props.activities.map(activity => {
         return  <ActivityItem setReplyActivity={props.setReplyActivity} setPopped={props.setPopped} key={activity.uuid} activity={activity} />
         })
     }
