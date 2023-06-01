@@ -1,16 +1,21 @@
 import './ActivityForm.css';
 import React from "react";
+import { useEffect, useState } from 'react';
 import process from 'process';
 import {ReactComponent as BombIcon} from './svg/bomb.svg';
 import {post} from 'lib/Requests';
 import FormErrors from 'components/FormErrors';
+import ToxicityMeter from 'components/ToxicityMeter';
 
+import * as toxicityClassifier from '@tensorflow-models/toxicity';
 
 export default function ActivityForm(props) {
-  const [count, setCount] = React.useState(0);
-  const [message, setMessage] = React.useState('');
-  const [ttl, setTtl] = React.useState('7-days');
-  const [errors, setErrors] = React.useState([]);
+  const [count, setCount] = useState(0);
+  const [message, setMessage] = useState('');
+  const [ttl, setTtl] = useState('7-days');
+  const [errors, setErrors] = useState([]);
+  const [model, setModel] = useState(null);
+  const [toxicity, setToxicity] = useState([]);
 
   const classes = []
   classes.push('count')
@@ -40,14 +45,40 @@ export default function ActivityForm(props) {
   })
   }
 
-  const textarea_onchange = (event) => {
+  const textarea_onchange = async (event) => {
     setCount(event.target.value.length);
     setMessage(event.target.value);
+    
+    // toxicity detection
+    const predictions = await model.classify([message]);
+    setToxicity(predictions
+      .filter(item => item.results[0].match === true)
+      .map(item => item.label)
+    );
+      
   }
 
   const ttl_onchange = (event) => {
     setTtl(event.target.value);
   }
+
+  // Load model
+  useEffect(() => {
+    async function loadModel() {
+      const model = await toxicityClassifier.load(0.6);
+      setModel(model);
+    };
+    if (model === null) {
+      loadModel()
+    };
+    if (toxicity.length !== 0){
+      setErrors(["Please be polite to be able to Crud!"]);
+    } else {
+      setErrors([]);
+    }
+  }, [model, message, toxicity])
+
+  const disableButton = toxicity.length !== 0;
 
   if (props.popped === true) {
     return (
@@ -60,10 +91,11 @@ export default function ActivityForm(props) {
           placeholder="what would you like to say?"
           value={message}
           onChange={textarea_onchange} 
+          onBlur={textarea_onchange}
         />
         <div className='submit'>
           <div className={classes.join(' ')}>{240-count}</div>
-          <button type='submit'>Crud</button>
+          <button type='submit' disabled={disableButton} className={disableButton?"disabled":""}>Crud</button>
           <div className='expires_at_field'>
             <BombIcon className='icon' />
             <select
@@ -79,8 +111,9 @@ export default function ActivityForm(props) {
               <option value='1-hour'>1 hour </option>
             </select>
           </div>
-          <FormErrors errors={errors} />
         </div>
+        <ToxicityMeter toxicity={toxicity} />
+        <FormErrors errors={errors}/>
       </form>
     );
   }
