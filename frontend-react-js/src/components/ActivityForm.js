@@ -79,8 +79,8 @@ export default function ActivityForm(props) {
               <option value='1-hour'>1 hour </option>
             </select>
           </div>
-          <FormErrors errors={errors} />
         </div>
+        <FormErrors errors={errors} />
       </form>
     );
   }
