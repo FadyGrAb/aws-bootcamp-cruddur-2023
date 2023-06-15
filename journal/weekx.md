@@ -16,6 +16,7 @@
   - [More General Cleanup Part 1 and Part 2](#more-general-cleanup-part-1-and-part-2)
 - [Homework Challenges](#homework-challenges)
   - [Using Github Actions to build and sync the static website](#using-github-actions-to-build-and-sync-the-static-website)
+  - [Creating an AI moderator using TensorFlow.js](#creating-a-real-time-ai-moderator-using-tensorflowjs)
 
 ## Required Homework:
 
@@ -69,7 +70,7 @@ def jwt_required(self, func=None, on_error=None):
 
 ### Refactor app.py
 
-I've refactored the `app.py` as instructed.
+I've refactored the `app.py` as instructed. And I've re-introduced my `Telemetry Module` which I've created in [week 02](./week2.md/#creating-a-seperate-telemetry-module)
 
 ### Refactor Flask Routes
 
@@ -182,4 +183,52 @@ else
 end
 ```
 
----------TODO Insert Github Actions Demo-------------
+Github Actions Workflow demo
+![demo](./assests/week-x/hwch-0101-github-actions.gif)
+
+### Creating a real-time AI moderator using TensorFlow.js:
+
+For this one, I've use TensorFlow.js pre-trained model, the [text toxicity detection model](https://github.com/tensorflow/tfjs-models/tree/master/toxicity), to block a user's Crud or Reply if they are offending. The moderator disables the Crud/submit button if the entered text by the user showed any kind of toxicity and shows a message to him/her about the found toxicity categories. This is done by integrating a React.js component with the model.  
+The model is downloaded in the users browser and no cloud services are used for inference. In order to avoid model re-downloads, I've used te `useEffect` React.js feature.
+
+```js
+useEffect(() => {
+  async function loadModel() {
+    const model = await toxicityClassifier.load(0.6);
+    setModel(model);
+  }
+  if (model === null) {
+    loadModel();
+  }
+  if (toxicity.length !== 0) {
+    setErrors(["Please be polite to be able to Crud!"]);
+  } else {
+    setErrors([]);
+  }
+}, [model, message, toxicity]);
+```
+
+The `useEffect` feature to execute code outside of React rendering life cycle. So, the previous function won't be executed at render-time and will be executed only if one or more of _model_, _message_ or, _toxicity_ have changed. Basically, it checks if the _model_ is loaded or not. And if not, it will load it. Also it takes advantage of the [improved error handling](#improved-error-handling-for-the-app) we have introduced and shows the "toxicity" as an error.  
+The Model evaluate the text entered by the user during the `onChange` and the `onBlur` events of the activity form text area component which may introduce some lag when typing. But mostly it isn't noticeable.
+
+```js
+const textarea_onchange = async (event) => {
+  setCount(event.target.value.length);
+  setMessage(event.target.value);
+
+  // toxicity detection
+  const predictions = await model.classify([message]);
+  setToxicity(
+    predictions
+      .filter((item) => item.results[0].match === true)
+      .map((item) => item.label)
+  );
+};
+```
+
+This function only sets `toxicity` to an array of the results "labels" where `match === true`. This is how the model results are structured in its docs.  
+Finally, the `toxicity` array is passed to a `ToxicityMeter` React.js component where it can be nicely showed to the user.
+
+#### Demo
+
+![ai mod demo](./assests/week-x/hwch-0201-ai-mod.gif)
