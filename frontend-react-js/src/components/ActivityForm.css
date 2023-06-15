@@ -100,3 +100,7 @@ form.activity_form select {
   position: relative;
   z-index: 1;
 }
+
+form.activity_form button[type='submit'].disabled {
+  background: gray;
+}
