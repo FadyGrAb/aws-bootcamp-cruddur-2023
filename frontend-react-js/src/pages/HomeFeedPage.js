@@ -1,14 +1,14 @@
-import './HomeFeedPage.css';
+import "./HomeFeedPage.css";
 import React from "react";
 
-import DesktopNavigation  from 'components/DesktopNavigation';
-import DesktopSidebar     from 'components/DesktopSidebar';
-import ActivityFeed from 'components/ActivityFeed';
-import ActivityForm from 'components/ActivityForm';
-import ReplyForm from 'components/ReplyForm';
+import DesktopNavigation from "components/DesktopNavigation";
+import DesktopSidebar from "components/DesktopSidebar";
+import ActivityFeed from "components/ActivityFeed";
+import ActivityForm from "components/ActivityForm";
+import ReplyForm from "components/ReplyForm";
 
-import {get} from 'lib/Requests';
-import {checkAuth} from 'lib/CheckAuth';
+import { get } from "lib/Requests";
+import { checkAuth } from "lib/CheckAuth";
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -19,46 +19,46 @@ export default function HomeFeedPage() {
   const dataFetchedRef = React.useRef(false);
 
   const loadData = async () => {
-    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
-    get(url,{
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
+    get(url, {
       auth: true,
-      success: function(data){
-        setActivities(data)
-      }
-    })
-  }
-  
-  React.useEffect(()=>{
+      success: function (data) {
+        setActivities(data);
+      },
+    });
+  };
+
+  React.useEffect(() => {
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
 
     loadData();
     checkAuth(setUser);
-  }, [])
+  }, []);
 
   return (
     <article>
-      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
-      <div className='content'>
-        <ActivityForm  
+      <DesktopNavigation user={user} active={"home"} setPopped={setPopped} />
+      <div className="content">
+        <ActivityForm
           popped={popped}
-          setPopped={setPopped} 
-          setActivities={setActivities} 
+          setPopped={setPopped}
+          setActivities={setActivities}
         />
-        <ReplyForm 
-          activity={replyActivity} 
-          popped={poppedReply} 
-          setPopped={setPoppedReply}  
+        <ReplyForm
+          activity={replyActivity}
+          popped={poppedReply}
+          setPopped={setPoppedReply}
         />
-        <div className='activity_feed'>
-          <div className='activity_feed_heading'>
-            <div className='title'>Home</div>
+        <div className="activity_feed">
+          <div className="activity_feed_heading">
+            <div className="title">Home!!</div>
           </div>
-          <ActivityFeed 
-            setReplyActivity={setReplyActivity} 
-            setPopped={setPoppedReply} 
-            activities={activities} 
+          <ActivityFeed
+            setReplyActivity={setReplyActivity}
+            setPopped={setPoppedReply}
+            activities={activities}
             showType={"home"}
           />
         </div>
