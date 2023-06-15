@@ -1,12 +1,22 @@
 import './ReplyForm.css';
 import React from "react";
+import { useEffect, useState } from 'react';
 import process from 'process';
+import {post} from 'lib/Requests';
 
-import ActivityContent  from '../components/ActivityContent';
+import ActivityContent  from 'components/ActivityContent';
+import FormErrors from 'components/FormErrors';
+
+import ToxicityMeter from 'components/ToxicityMeter';
+
+import * as toxicityClassifier from '@tensorflow-models/toxicity';
 
 export default function ReplyForm(props) {
-  const [count, setCount] = React.useState(0);
-  const [message, setMessage] = React.useState('');
+  const [count, setCount] = useState(0);
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState([]);
+  const [model, setModel] = useState(null);
+  const [toxicity, setToxicity] = useState([]);
 
   const classes = []
   classes.push('count')
@@ -16,44 +26,36 @@ export default function ReplyForm(props) {
 
   const onsubmit = async (event) => {
     event.preventDefault();
-    try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${props.activity.uuid}/reply`
-      const res = await fetch(backend_url, {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: message
-        }),
-      });
-      let data = await res.json();
-      if (res.status === 200) {
-        // add activity to the feed
-
-        let activities_deep_copy = JSON.parse(JSON.stringify(props.activities))
-        let found_activity = activities_deep_copy.find(function (element) {
-          return element.uuid ===  props.activity.uuid;
-        });
-        found_activity.replies.push(data)
-
-        props.setActivities(activities_deep_copy);
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${props.activity.uuid}/reply`
+    const payload_data = {
+      activity_uuid: props.activity.uuid,
+      message: message
+    }
+    post(url,payload_data,{
+      auth: true,
+      setErrors: setErrors,
+      success: function(data){
+        if (props.setReplies) {
+          props.setReplies(current => [data,...current]);
+        }
         // reset and close the form
         setCount(0)
         setMessage('')
         props.setPopped(false)
-      } else {
-        console.log(res)
       }
-    } catch (err) {
-      console.log(err);
-    }
+    })
   }
 
-  const textarea_onchange = (event) => {
+  const textarea_onchange = async (event) => {
     setCount(event.target.value.length);
     setMessage(event.target.value);
+
+    // toxicity detection
+    const predictions = await model.classify([message]);
+    setToxicity(predictions
+      .filter(item => item.results[0].match === true)
+      .map(item => item.label)
+    );
   }
 
   let content;
@@ -61,12 +63,38 @@ export default function ReplyForm(props) {
     content = <ActivityContent activity={props.activity} />;
   }
 
+  const close = (event)=> {
+    if (event.target.classList.contains("reply_popup")) {
+      props.setPopped(false)
+    }
+  }
+
+  // Load model
+  useEffect(() => {
+    async function loadModel() {
+      const model = await toxicityClassifier.load(0.6);
+      setModel(model);
+    };
+    if (model === null) {
+      loadModel()
+    };
+    if (toxicity.length !== 0){
+      setErrors(["Please be polite to be able to Crud!"]);
+    } else {
+      setErrors([]);
+    }
+  }, [model, message, toxicity])
+
+  const disableButton = toxicity.length !== 0;
 
   if (props.popped === true) {
     return (
-      <div className="popup_form_wrap">
+      <div className="popup_form_wrap reply_popup" onClick={close}>
         <div className="popup_form">
           <div className="popup_heading">
+            <div className="popup_title">
+              Reply to...
+            </div>
           </div>
           <div className="popup_content">
             <div className="activity_wrap">
@@ -81,11 +109,14 @@ export default function ReplyForm(props) {
                 placeholder="what is your reply?"
                 value={message}
                 onChange={textarea_onchange} 
+                onBlur={textarea_onchange}
               />
               <div className='submit'>
                 <div className={classes.join(' ')}>{240-count}</div>
-                <button type='submit'>Reply</button>
+                <button type='submit' disabled={disableButton} className={disableButton?"disabled":""}>Reply</button>
               </div>
+              <ToxicityMeter toxicity={toxicity} />
+              <FormErrors errors={errors} />
             </form>
           </div>
         </div>

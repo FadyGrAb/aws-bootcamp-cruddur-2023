@@ -77,6 +77,9 @@ Parameters:
   EnvCognitoVerifierUrl:
     Type: String
     Default: "http://cognito-verifier-cfn.cruddur:5555"
+  EnvDDBMessageTable:
+    Type: String
+    Default: cruddur-messages
   SecretsAWSAccessKeyId:
     Type: String
     Default: 'arn:aws:ssm:us-east-1:********1769:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
@@ -235,6 +238,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref ServiceNameBackend
           Environment:
+            - Name: DDB_MESSAGE_TABLE
+              Value: !Ref EnvDDBMessageTable
             - Name: 'OTEL_SERVICE_NAME'
               Value: !Ref EnvOtelServiceName
             - Name: 'OTEL_EXPORTER_OTLP_ENDPOINT'

@@ -1,11 +1,11 @@
-# from datetime import datetime, timedelta, timezone
-# from aws_xray_sdk.core import xray_recorder
+from datetime import datetime, timedelta, timezone
+from time import sleep
+import random
 
 from lib.db import db
 
-
 class UserActivities:
-    def run(user_handle):
+    def run(user_handle, telemetry_agent):
         # Xray
 
         model = {
@@ -20,22 +20,19 @@ class UserActivities:
             results = db.query_object_json(sql, {'handle': user_handle})
             model['data'] = results
 
-            # subsegment = xray_recorder.begin_subsegment('home-activities-mock-data')
-            # # xray
-            # dict = {
-            #   "now": now.isoformat(),
-            #   "results-size": len(model['data'])
-            # }
-            # subsegment.put_metadata('key', dict, 'namespace')
-            # xray_recorder.end_subsegment()
-
             # X-ray subsegments
-            # subsegment = xray_recorder.begin_subsegment('user_activities_data_mock')
+            now = datetime.now(timezone.utc).astimezone()
+            subsegment = telemetry_agent.xray_begin_subsegment('user_activities_telemetry_module_data_mock')
+      
+            telemetry_agent.xray_add_subsegment_metadata("timestamp", now.isoformat())
+            telemetry_agent.xray_add_subsegment_metadata("response-size", len(model['data']))
 
-            # # Add subsegment metadata
-            # xray_recorder.put_metadata("timestamp", now.isoformat())
-            # xray_recorder.put_metadata("response-size", len(model['data']))
+            telemetry_agent.xray_end_subsegment()
 
-            # xray_recorder.end_subsegment()
+            # trace simulation
+            # for i in range (10):
+            #     telemetry_agent.xray_begin_subsegment(f"user_activities_telemetry_module_added_latency_{i}")
+            #     sleep(random.random())
+            #     telemetry_agent.xray_end_subsegment()
 
         return model

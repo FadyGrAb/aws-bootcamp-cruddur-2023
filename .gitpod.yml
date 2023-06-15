@@ -34,7 +34,6 @@ tasks:
       echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
-    command: |
       export GITPOD_IP=$(curl ifconfig.me)
       bash "$THEIA_WORKSPACE_ROOT/bin/rds/update-sg-rule"
 

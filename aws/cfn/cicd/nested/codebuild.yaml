@@ -25,9 +25,8 @@ Parameters:
   BuildSpec:
     Type: String
     Default: 'buildspec.yaml'
-  ProjectName:
+  ArtifactBucketName:
     Type: String
-    Default: 'CrdBuildProject'
 Resources:
   CodeBuild:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
@@ -44,6 +43,10 @@ Resources:
         Image: !Ref CodeBuildImage
         Type: LINUX_CONTAINER
         PrivilegedMode: true
+        EnvironmentVariables:
+        - Name: AWS_ACCOUNT_ID
+          Type: PLAINTEXT
+          Value: '********1769'
       LogsConfig:
         CloudWatchLogs:
           GroupName: !Ref LogGroupPath
@@ -52,7 +55,6 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: !Ref BuildSpec
-      Name: !Sub ${AWS::StackName}CrdBuildProject
   CodeBuildRole:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
     Type: AWS::IAM::Role
@@ -66,6 +68,16 @@ Resources:
         Version: '2012-10-17'
       Path: /
       Policies:
+        - PolicyName: !Sub ${AWS::StackName}S3ArtifactAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - s3:*
+                Effect: Allow
+                Resource:
+                  - !Sub arn:aws:s3:::${ArtifactBucketName}
+                  - !Sub arn:aws:s3:::${ArtifactBucketName}/*
         - PolicyName: !Sub ${AWS::StackName}ECRPolicy
           PolicyDocument:
             Version: '2012-10-17'
@@ -114,4 +126,4 @@ Resources:
 Outputs:
   CodeBuildProjectName:
     Description: "CodeBuildProjectName"
-    Value: !Sub ${AWS::StackName}CrdBuildProject
+    Value: !Ref CodeBuild

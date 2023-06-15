@@ -8,7 +8,7 @@ def handler(event:, context:)
   puts("origin", origin)
   dev_url = "https:\/\/3000-fadygrab-awsbootcampcru-(.+)\.gitpod\.io"
   if /#{dev_url}/.match(origin).nil? # if no match return the prod domain
-    origin = "api.crudderme.click"
+    origin = "https://crudderme.click"
   end
   # return cors headers for preflight check
   if event['routeKey'] == "OPTIONS /{proxy+}"
